@@ -8,6 +8,8 @@
 
 package model.impl;
 
+import actors.ModelUpdate;
+import model.AbstractModel;
 import model.IMills;
 
 import java.io.BufferedReader;
@@ -36,7 +38,7 @@ import java.util.List;
  *
  * */
 
-public class Mills implements IMills {
+public class Mills extends AbstractModel implements IMills {
     private static final int NUMBERVERTEX = 24;
     private millsList millsArray[];
 
@@ -78,6 +80,11 @@ public class Mills implements IMills {
         } catch (IOException e) {
             System.exit(1);
         }
+    }
+
+    @Override
+    protected void handleMessage(ModelUpdate update) {
+        //TODO
     }
 
     class millsList {

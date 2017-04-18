@@ -8,7 +8,9 @@
 
 package model.impl;
 
+import actors.ModelUpdate;
 import com.google.inject.Inject;
+import model.AbstractModel;
 import model.IGamefieldGraph;
 
 import java.io.BufferedReader;
@@ -19,17 +21,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class GamefieldGraph implements IGamefieldGraph {
+public class GamefieldGraph extends AbstractModel implements IGamefieldGraph {
+
     private static final int NUMBERVERTEX = 24;
     private List<List<Integer>> adjacencyList;
     private vertex vertexes[];
 
     @Inject
     public GamefieldGraph() {
-
-        adjacencyList = new ArrayList<List<Integer>>(NUMBERVERTEX);
+        this.type = String.class;
+        adjacencyList = new ArrayList<>(NUMBERVERTEX);
         for (int i = 0; i < NUMBERVERTEX; i++) {
-            adjacencyList.add(new LinkedList<Integer>());
+            adjacencyList.add(new LinkedList<>());
         }
         createEdges();
 
@@ -47,7 +50,7 @@ public class GamefieldGraph implements IGamefieldGraph {
     public List<Integer> getAdjacencyList(int vertex) {
         final int v = (vertex - 1);
         if ((v < 0) || (v >= NUMBERVERTEX)) {
-            return new ArrayList<Integer>();
+            return new ArrayList<>();
         }
         return adjacencyList.get(v);
     }
@@ -90,6 +93,13 @@ public class GamefieldGraph implements IGamefieldGraph {
             System.exit(1);
         }
     }
+
+    @Override
+    protected void handleMessage(ModelUpdate update) {
+        update.getGamefieldGraph();
+        //Copy Values
+    }
+
 
     class vertex {
         private char color;
