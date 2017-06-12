@@ -8,9 +8,12 @@
 
 package model.impl;
 
-import actors.ModelUpdate;
+import messages.BoolAnswer;
+import messages.GetStoneColorMessage;
+import messages.MsgMoveStone;
+import messages.SetStoneVertexRequest;
+import akka.actor.UntypedAbstractActor;
 import com.google.inject.Inject;
-import model.AbstractModel;
 import model.IGamefieldGraph;
 
 import java.io.BufferedReader;
@@ -21,7 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class GamefieldGraph extends AbstractModel implements IGamefieldGraph {
+public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGraph {
 
     private static final int NUMBERVERTEX = 24;
     private List<List<Integer>> adjacencyList;
@@ -29,7 +32,6 @@ public class GamefieldGraph extends AbstractModel implements IGamefieldGraph {
 
     @Inject
     public GamefieldGraph() {
-        this.type = String.class;
         adjacencyList = new ArrayList<>(NUMBERVERTEX);
         for (int i = 0; i < NUMBERVERTEX; i++) {
             adjacencyList.add(new LinkedList<>());
@@ -95,11 +97,49 @@ public class GamefieldGraph extends AbstractModel implements IGamefieldGraph {
     }
 
     @Override
-    protected void handleMessage(ModelUpdate update) {
-        update.getGamefieldGraph();
-        //Copy Values
+    public void onReceive(Object message) throws Throwable {
+        boolean answer = false;
+        if( message instanceof GetStoneColorMessage) {
+            char color = getStoneColorVertex(((GetStoneColorMessage) message).getVertex());
+            getSender().tell(new GetStoneColorMessage(color), getSelf());
+        } else if(message instanceof SetStoneVertexRequest) {
+            answer = receiveMsgSetStoneVertex((SetStoneVertexRequest) message);
+            getSender().tell(new BoolAnswer(answer), getSelf());
+        } else if( message instanceof MsgMoveStone) {
+            answer = receiveMsgMoveStone((MsgMoveStone) message);
+            getSender().tell(new BoolAnswer(answer), getSelf());
+        }
     }
 
+    private boolean receiveMsgMoveStone(MsgMoveStone message) {
+        //TODO: Create Enum for Colors to avoid checking
+        /*if (color == 'n' || (color != 'w') && (color != 's')) {
+            return false;
+        }*/
+        if(getStoneColorVertex(message.getEndVertex()) != 'n' ||
+                getStoneColorVertex(message.getStartVertex()) != message.getColor()) {
+            return false;
+        }
+        List<Integer> adjacencyList = getAdjacencyList(message.getStartVertex());
+        if(!adjacencyList.contains(message.getEndVertex() - 1)) {
+            return false;
+        }
+        return setStoneVertex(message.getStartVertex(), 'n') &&
+                setStoneVertex(message.getEndVertex(), message.getColor());
+    }
+
+    private boolean receiveMsgSetStoneVertex(SetStoneVertexRequest message) {
+        boolean requirement;
+        if(message.getColor() == 'n') { //remove stone
+            requirement = getStoneColorVertex(message.getVertex()) != 'n';
+        } else {
+            requirement = getStoneColorVertex(message.getVertex()) == 'n';
+        }
+        if(requirement) {
+            requirement = setStoneVertex(message.getVertex(), message.getColor());
+        }
+        return requirement;
+    }
 
     class vertex {
         private char color;

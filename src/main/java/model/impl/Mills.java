@@ -8,8 +8,9 @@
 
 package model.impl;
 
-import actors.ModelUpdate;
-import model.AbstractModel;
+import akka.actor.UntypedAbstractActor;
+import messages.GetMillsAnswer;
+import messages.GetMillsRequest;
 import model.IMills;
 
 import java.io.BufferedReader;
@@ -38,7 +39,7 @@ import java.util.List;
  *
  * */
 
-public class Mills extends AbstractModel implements IMills {
+public class Mills extends UntypedAbstractActor implements IMills {
     private static final int NUMBERVERTEX = 24;
     private millsList millsArray[];
 
@@ -83,8 +84,10 @@ public class Mills extends AbstractModel implements IMills {
     }
 
     @Override
-    protected void handleMessage(ModelUpdate update) {
-        //TODO
+    public void onReceive(Object message) throws Throwable {
+        int vertex = ((GetMillsRequest) message).getVertex();
+        GetMillsAnswer answer = new GetMillsAnswer(millsArray[vertex - 1].mill1, millsArray[vertex - 1].mill2);
+        getSender().tell(answer, getSelf());
     }
 
     class millsList {

@@ -8,88 +8,71 @@
 
 package controller.impl;
 
+import akka.actor.ActorRef;
+import akka.pattern.Patterns;
+import akka.util.Timeout;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import controller.IGamefieldGraphAdapter;
-import model.IGamefieldGraph;
-import model.impl.Mills;
+import messages.*;
+import scala.concurrent.Await;
+import scala.concurrent.Future;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class GamefieldAdapter implements IGamefieldGraphAdapter {
 
     private static final int MAXVERTEX = 24;
-    private Mills mill;
-    private IGamefieldGraph field;
 
-    @Inject
-    public GamefieldAdapter(IGamefieldGraph pField) {
-        field = pField;
-        mill = new Mills();
+    @Inject @Named("millsActor")
+    private ActorRef millsActor;
+
+    @Inject @Named("gamefieldActor")
+    private ActorRef gamefieldActor;
+
+    @Override
+    public boolean setStone(int vertex, char color) {
+        SetStoneVertexRequest request = new SetStoneVertexRequest(vertex, color);
+        BoolAnswer answer = (BoolAnswer) ask(gamefieldActor, request);
+        return answer.getContent();
     }
 
     @Override
-    public boolean setStone(int v, char w) {
-        if (field.getStoneColorVertex(v) != 'n') {
-            return false;
-        }
-        return field.setStoneVertex(v, w);
+    public boolean removeStone(int vertex) {
+        return setStone(vertex, 'n');
     }
 
     @Override
-    public boolean removeStone(int v) {
-        char stoneColor = field.getStoneColorVertex(v);
-        if ((field.getStoneColorVertex(v) == 'n')
-                || (numberOfMills(v, stoneColor) > 0)) {
-            return false;
-        }
-        return field.setStoneVertex(v, 'n');
+    public char getColor(int vertex) {
+        GetStoneColorMessage request = new GetStoneColorMessage(vertex);
+        GetStoneColorMessage answer = (GetStoneColorMessage) ask(gamefieldActor, request);
+        return answer.getContent();
     }
 
     @Override
-    public char getColor(int v) {
-        return field.getStoneColorVertex(v);
+    public boolean move(int startVertex, int endVertex, char color) {
+        MsgMoveStone request = new MsgMoveStone(startVertex, endVertex, color);
+        BoolAnswer answer = (BoolAnswer) ask(gamefieldActor, request);
+        return answer.getContent();
     }
 
     @Override
-    public boolean move(int startVertex, int endVertex, char w) {
-        if (w == 'n') {
-            return false;
-        }
-        if ((w != 'w') && (w != 's')) {
-            return false;
-        }
-        if ('n' != field.getStoneColorVertex(endVertex)) {
-            return false;
-        }
-
-        if (w != field.getStoneColorVertex(startVertex)) {
-            return false;
-        }
-        List<Integer> temp1 = field.getAdjacencyList(startVertex);
-        if (!temp1.contains(endVertex - 1)) {
-            return false;
-        }
-
-        field.setStoneVertex(startVertex, 'n');
-        field.setStoneVertex(endVertex, w);
-
-        return true;
-    }
-
-    @Override
-    public int numberOfMills(int v, char c) {
-        if ((v < 1) || (v > MAXVERTEX) || ((c != 'w') && (c != 's'))) {
+    public int numberOfMills(int vertex, char color) {
+        if ((vertex < 1) || (vertex > MAXVERTEX) || ((color != 'w') && (color != 's'))) {
             return 0;
         }
-        List<Integer> mill1 = mill.getMill1(v);
-        List<Integer> mill2 = mill.getMill2(v);
+        GetMillsRequest request = new GetMillsRequest(vertex);
+        GetMillsAnswer answer = (GetMillsAnswer) ask(millsActor, request);
+        List<Integer> mill1 = answer.getMill1();
+        List<Integer> mill2 = answer.getMill2();
         int numberMills = 0;
 
-        if ((getColor(mill1.get(0)) == getColor(mill1.get(1))) && (c == getColor(mill1.get(0)))) {
+        if ((getColor(mill1.get(0)) == getColor(mill1.get(1))) && (color == getColor(mill1.get(0)))) {
             numberMills++;
         }
 
-        if ((getColor(mill2.get(0)) == getColor(mill2.get(1))) && (c == getColor(mill2.get(0)))) {
+        if ((getColor(mill2.get(0)) == getColor(mill2.get(1))) && (color == getColor(mill2.get(0)))) {
             numberMills++;
         }
 
@@ -97,4 +80,15 @@ public class GamefieldAdapter implements IGamefieldGraphAdapter {
         return numberMills;
     }
 
+    private Object ask(ActorRef actorRef, Object request) {
+        final Timeout timeout = new Timeout(5, TimeUnit.SECONDS);
+        final Future<Object> future = Patterns.ask(actorRef, request, timeout);
+        try {
+            return Await.result(future, timeout.duration());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return null;
+    }
 }

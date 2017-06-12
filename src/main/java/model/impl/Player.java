@@ -9,11 +9,9 @@
 package model.impl;
 
 
-import actors.ModelUpdate;
-import model.AbstractModel;
 import model.IPlayer;
 
-public class Player extends AbstractModel implements IPlayer {
+public class Player implements IPlayer {
 
     private String name;
     private char color;
@@ -31,9 +29,4 @@ public class Player extends AbstractModel implements IPlayer {
         return this.color;
     }
 
-
-    @Override
-    protected void handleMessage(ModelUpdate update) {
-        //TODO
-    }
 }
