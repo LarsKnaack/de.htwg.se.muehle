@@ -1,7 +1,6 @@
 package controller;
 
 import controller.impl.GamefieldAdapter;
-import model.impl.GamefieldGraph;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,7 +12,7 @@ public class GamefieldAdaptertest {
 
     @Before
     public void setUp() {
-        cgf = new GamefieldAdapter(new GamefieldGraph());
+        cgf = new GamefieldAdapter();
     }
 
     @Test

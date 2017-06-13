@@ -2,7 +2,6 @@ package controller;
 
 import controller.impl.Controller;
 import controller.impl.GamefieldAdapter;
-import model.impl.GamefieldGraph;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,7 +12,7 @@ public class ControllerTest {
 
     @Before
     public void setUp() {
-        control = new Controller(new GamefieldAdapter(new GamefieldGraph()));
+        control = new Controller(new GamefieldAdapter());
     }
 
     @Test
@@ -161,7 +160,7 @@ public class ControllerTest {
         assertEquals(true, control.gameEnded());
 
         control = null;
-        control = new Controller(new GamefieldAdapter(new GamefieldGraph()));
+        control = new Controller(new GamefieldAdapter());
 
         control.setStone(1);
         control.setStone(2);
@@ -228,7 +227,7 @@ public class ControllerTest {
         assertEquals("", control.getWinningPlayer());
 
         control = null;
-        control = new Controller(new GamefieldAdapter(new GamefieldGraph()));
+        control = new Controller(new GamefieldAdapter());
         control.setStone(1);
         control.setStone(3);
         control.setStone(5);

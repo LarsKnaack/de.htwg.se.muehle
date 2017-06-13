@@ -1,6 +1,5 @@
 import controller.impl.Controller;
 import controller.impl.GamefieldAdapter;
-import model.impl.GamefieldGraph;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -13,7 +12,7 @@ public class GamefieldDisplayTest {
 
     @Test
     public void test() {
-        Controller controller = new Controller(new GamefieldAdapter(new GamefieldGraph()));
+        Controller controller = new Controller(new GamefieldAdapter());
         controller.setStone(2);
         String log;
         Map<Integer, Character> map = new HashMap<>();
