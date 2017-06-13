@@ -14,7 +14,7 @@ crossPaths := false
 // This forbids including Scala related libraries into the dependency
 autoScalaLibrary := false
 
-// library dependencies. (orginization name) % (project name) % (version)
+// library dependencies. (organization name) % (project name) % (version)
 libraryDependencies ++= Seq(
   "com.google.inject" % "guice" % "4.1.0",
   "log4j" % "log4j" % "1.2.17",

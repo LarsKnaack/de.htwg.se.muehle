@@ -18,7 +18,9 @@ import observer.IObservable;
 import observer.IObserver;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Controller implements IController, IObservable {
 
@@ -226,6 +228,16 @@ public class Controller implements IController, IObservable {
             endThread ende = new endThread();
             ende.start();
         }
+    }
+
+    public Map getVertexMap() {
+        Map<Integer, Character> map = new HashMap();
+
+        for (int i = 1; i <= 24; ++i) {
+            map.put(i, this.getVertexColor(i));
+        }
+
+        return map;
     }
 
 

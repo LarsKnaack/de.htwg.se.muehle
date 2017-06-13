@@ -10,6 +10,8 @@ package controller;
 
 import observer.IObserver;
 
+import java.util.Map;
+
 public interface IController {
     /**
      * Set the stones
@@ -128,4 +130,9 @@ public interface IController {
      * @return int already setted Stones
      * */
     int getSettedStonesPlayer2();
+
+    /**
+     * TODO: Find better way
+     */
+    Map getVertexMap();
 }
