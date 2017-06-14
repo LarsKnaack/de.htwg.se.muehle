@@ -11,17 +11,18 @@ package view;
 import controller.IController;
 import model.IPlayer;
 import observer.IObserver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Logger;
 
 public class Tui implements IObserver {
 
     private IController controller;
     private Scanner sc = new Scanner(System.in);
-    private Logger logger = Logger.getLogger("Muehle");
+    Logger logger = LoggerFactory.getLogger("view.Tui");
 
     public Tui(IController controller) {
         this.controller = controller;
@@ -31,7 +32,7 @@ public class Tui implements IObserver {
 
 
     private void loggerMethod(String log) {
-        logger.info("\n" + log);
+        logger.info(log);
     }
 
 
@@ -59,7 +60,7 @@ public class Tui implements IObserver {
     public String display() {
         String log;
 
-        log =   "%1-----------%2-----------%3\t\t"          + "1-----------2-----------3\n"  +
+        log = "\n%1-----------%2-----------%3\t\t" + "1-----------2-----------3\n" +
                 "|           |           |\t\t"             + "|           |           |\n"  +
                 "|   %4-------%5-------%6   |\t\t"          + "|   4-------5-------6   |\n"  +
                 "|   |       |       |   |\t\t"             + "|   |       |       |   |\n"  +
