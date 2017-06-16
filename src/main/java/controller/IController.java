@@ -135,4 +135,6 @@ public interface IController {
      * TODO: Find better way
      */
     Map getVertexMap();
+
+    void startServer();
 }

@@ -9,6 +9,18 @@
 package controller.impl;
 
 
+import akka.NotUsed;
+import akka.actor.ActorSystem;
+import akka.http.javadsl.ConnectHttp;
+import akka.http.javadsl.Http;
+import akka.http.javadsl.ServerBinding;
+import akka.http.javadsl.model.HttpRequest;
+import akka.http.javadsl.model.HttpResponse;
+import akka.http.javadsl.model.StatusCodes;
+import akka.http.javadsl.server.AllDirectives;
+import akka.http.javadsl.server.Route;
+import akka.stream.ActorMaterializer;
+import akka.stream.javadsl.Flow;
 import com.google.inject.Inject;
 import controller.IController;
 import controller.IGamefieldGraphAdapter;
@@ -16,13 +28,18 @@ import model.IPlayer;
 import model.impl.Player;
 import observer.IObservable;
 import observer.IObserver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletionStage;
 
-public class Controller implements IController, IObservable {
+import static akka.http.javadsl.server.PathMatchers.integerSegment;
+
+public class Controller extends AllDirectives implements IController, IObservable {
 
     private static final int MINSTONES = 3;
     private static final int ANZSTONESGES = 18;
@@ -37,9 +54,13 @@ public class Controller implements IController, IObservable {
     private String playerWon;
     private int currentStoneToDelete;
     private int selected;
+    private volatile Object shutdownSwitch;
+    private Logger LOGGER;
 
     @Inject
     public Controller(IGamefieldGraphAdapter pGamefield) {
+        LOGGER = LoggerFactory.getLogger(this.getClass());
+        shutdownSwitch = new Object();
         this.gamefield = pGamefield;
 
         this.player1 = new Player("Player1", 'w');
@@ -53,6 +74,57 @@ public class Controller implements IController, IObservable {
         this.selected = 0;
         this.settedStonesPlayer1 = 0;
         this.settedStonesPlayer2 = 0;
+    }
+
+    public void startServer() {
+        ActorSystem actorSystem = ActorSystem.create("routes");
+        Http http = Http.get(actorSystem);
+        final ActorMaterializer materializer = ActorMaterializer.create(actorSystem);
+        final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = this.createRoute().flow(actorSystem, materializer);
+        final CompletionStage<ServerBinding> binding = http.bindAndHandle(routeFlow,
+                ConnectHttp.toHost("localhost", 8080), materializer);
+        LOGGER.info("Server online at http://localhost:8080/\n");
+        System.out.println("Server online at http://localhost:8080/\n");
+        Thread runner = new Thread(() -> {
+            try {
+                synchronized (shutdownSwitch) {
+                    shutdownSwitch.wait();
+                }
+            } catch (InterruptedException e) {
+                LOGGER.error(e.getMessage());
+            }
+
+            binding.thenCompose(ServerBinding::unbind).thenAccept(unbound -> actorSystem.terminate());
+            LOGGER.info("REST Server shutdown");
+        });
+        runner.start();
+    }
+
+    private Route createRoute() {
+        Route route =
+                route(
+                        pathPrefix("set_stone", () ->
+                                route(
+                                        path(integerSegment(), (i) ->
+                                                complete((setStone(i) ? StatusCodes.OK : StatusCodes.METHOD_NOT_ALLOWED))
+                                        )
+                                )
+                        ),
+                        path("q", () -> get(() -> {
+                            LOGGER.info("q request");
+
+                            synchronized (shutdownSwitch) {
+                                shutdownSwitch.notify();
+                            }
+                            endThread ende = new endThread();
+                            ende.start();
+                            return complete("<h1>quitGame</h1>");
+                        })),
+                        path("", () -> get(() -> {
+                            return complete("<h1>Hello</h1>");
+                        }))
+                );
+        return route;
     }
 
     @Override

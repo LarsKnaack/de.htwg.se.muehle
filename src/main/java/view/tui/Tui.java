@@ -6,7 +6,7 @@
  * @version 1.0
  */
 
-package view;
+package view.tui;
 
 import controller.IController;
 import model.IPlayer;
@@ -22,7 +22,7 @@ public class Tui implements IObserver {
 
     private IController controller;
     private Scanner sc = new Scanner(System.in);
-    Logger logger = LoggerFactory.getLogger("view.Tui");
+    Logger logger = LoggerFactory.getLogger("view.tui.Tui");
 
     public Tui(IController controller) {
         this.controller = controller;

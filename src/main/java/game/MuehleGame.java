@@ -11,7 +11,7 @@ package game;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import controller.IController;
-import view.Tui;
+import view.tui.Tui;
 import view.gui.Gui;
 
 import java.util.Scanner;
@@ -31,6 +31,7 @@ public final class MuehleGame {
         controller = injector.getInstance(IController.class);
         gui = new Gui(this.controller);
         tui = new Tui(this.controller);
+        controller.startServer();
     }
 
     public static void main(String[] args) {
