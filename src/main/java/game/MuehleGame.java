@@ -31,7 +31,6 @@ public final class MuehleGame {
         controller = injector.getInstance(IController.class);
         gui = new Gui(this.controller);
         tui = new Tui(this.controller);
-        controller.startServer();
     }
 
     public static void main(String[] args) {
