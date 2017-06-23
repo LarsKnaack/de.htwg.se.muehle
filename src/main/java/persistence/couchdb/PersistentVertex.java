@@ -11,12 +11,12 @@ public class PersistentVertex extends CouchDbDocument {
     private Integer vertex = 0;
     private char color = 'n';
 
-    public PersistentCell(Integer vertex, char color) {
+    public PersistentVertex(Integer vertex, char color) {
         this.vertex = vertex;
         this.color = color;
     }
 
-    public PersistentCell() {
+    public PersistentVertex() {
     }
 
     public Integer getVertex() {

@@ -1,30 +1,24 @@
 package persistence.couchdb;
 
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import model.IGamefieldGraph;
 import model.impl.GamefieldGraph;
-import org.apache.log4j.Logger;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
-import org.ektorp.Revision;
-import org.ektorp.ViewQuery;
 import org.ektorp.http.HttpClient;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
-
-import model.IGamefieldGraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import persistence.IGamefieldDAO;
-import persistence.couchdb.PersistentGamefieldGraph;
-import persistence.couchdb.PersistentVertex;
+
+import java.net.MalformedURLException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
 
     private CouchDbConnector db = null;
-    private Logger logger = Logger.getLogger("persistence.couchdb");
+    private Logger logger = LoggerFactory.getLogger("persistence.couchdb");
 
     public GamefieldGraphCouchdbDAO() {
         HttpClient client = null;
@@ -119,7 +113,7 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
 
     @Override
     public IGamefieldGraph getGamefieldById(String id) {
-        PersistentGamefieldGraph g = db.find(PersistentGamefield.class, id);
+        PersistentGamefieldGraph g = db.find(PersistentGamefieldGraph.class, id);
         if (g == null) {
             return null;
         }

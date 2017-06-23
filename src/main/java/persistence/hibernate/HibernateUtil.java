@@ -1,8 +1,7 @@
 package persistence.hibernate;
 
-import org.hibernate.cfg.AnnotationInclusion;
 import org.hibernate.SessionFactory;
-
+import org.hibernate.cfg.Configuration;
 
 
 /**
@@ -13,8 +12,8 @@ public final class HibernateUtil {
     private static final SessionFactory SESSION_FACTORY;
 
     static  {
-        final AnnotationConfiguration cfg = new
-                AnnotationConfiguration();
+        final Configuration cfg = new
+                Configuration();
                 cfg.configure("hibernate.cfg.xml");
                 SESSION_FACTORY = cfg.buildSessionFactory();
 

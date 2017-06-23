@@ -30,15 +30,13 @@ public class GamefieldDb4oDAO implements IGamefieldDAO {
         List<IGamefieldGraph> gamefieldGraphs = db.query(new Predicate<IGamefieldGraph>() {
             private static final long serialVersionUID = 1L;
 
-            public bool match(IGamefieldGraph gamefieldGraph) {
+            public boolean match(IGamefieldGraph gamefieldGraph) {
                 return (id.equals(gamefieldGraph.getId()));
             }
         });
 
         if(gamefieldGraphs.size() > 0)
             return gamefieldGraphs.get(0);
-
-        return null;
 
         return null;
     }
@@ -48,7 +46,7 @@ public class GamefieldDb4oDAO implements IGamefieldDAO {
         List<IGamefieldGraph> gamefields = db.query(new Predicate<IGamefieldGraph>() {
             private static final long serialVersionUID = 1L;
 
-            public bool match(IGamefieldGraph gamefieldGraph) {
+            public boolean match(IGamefieldGraph gamefieldGraph) {
                 return (gamefieldGraph.getId().equals(id));
             }
 

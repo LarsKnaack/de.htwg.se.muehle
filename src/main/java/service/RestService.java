@@ -12,6 +12,8 @@ import akka.http.javadsl.server.AllDirectives;
 import akka.http.javadsl.server.Route;
 import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import controller.IController;
@@ -24,11 +26,13 @@ import java.util.concurrent.CompletionStage;
 import static akka.http.javadsl.server.PathMatchers.integerSegment;
 import static akka.http.javadsl.server.PathMatchers.segment;
 
+
 public class RestService extends AllDirectives {
 
     private static volatile Object shutdownSwitch;
     private static Logger LOGGER;
     private IController controller;
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Inject
     public RestService(IController controller) {
@@ -44,8 +48,9 @@ public class RestService extends AllDirectives {
         RestService app = Guice.createInjector(new MuehleModule()).getInstance(RestService.class);
         final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = app.createRoute().flow(actorSystem, materializer);
         final CompletionStage<ServerBinding> binding = http.bindAndHandle(routeFlow,
-                ConnectHttp.toHost("localhost", 8080), materializer);
-        LOGGER.info("Server online at http://localhost:8080/\n");
+                ConnectHttp.toHost(Endpoints.BASE_HOST, Endpoints.BASE_PORT), materializer);
+        LOGGER.info("Server online at " + Endpoints.BASE_URL + "\n");
+
         Thread runner = new Thread(() -> {
             try {
                 synchronized (shutdownSwitch) {
@@ -63,6 +68,8 @@ public class RestService extends AllDirectives {
 
     private Route createRoute() {
         return route(
+                path(segment("update"), () -> createHttpResponse(true)),
+                path(segment("handleInput").slash(integerSegment()), this::handleInput),
                 pathPrefix("stone", () ->
                         route(
                                 pathPrefix(integerSegment(), vertex ->
@@ -79,6 +86,18 @@ public class RestService extends AllDirectives {
                     return complete("<h1>quitGame</h1>");
                 }))
         );
+    }
+
+    private Route handleInput(Integer input) {
+        boolean result;
+        if (controller.getCurrentStonesToDelete() > 0) {
+            result = controller.millDeleteStone(input);
+        } else if (controller.requireInitial()) {
+            result = controller.setStone(input);
+        } else {
+            result = controller.moveStone(input);
+        }
+        return createHttpResponse(result);
     }
 
     private Route getVertexColor(int vertex) {
@@ -98,7 +117,15 @@ public class RestService extends AllDirectives {
 
     private Route createHttpResponse(boolean result) {
         if (result) {
-            return complete(StatusCodes.OK, controller.getGamefieldString());
+            ObjectNode responseBody = mapper.createObjectNode();
+            responseBody.put("gamefield", controller.getGamefieldString());
+            responseBody.set("stones",
+                    mapper.createObjectNode()
+                            .put("Player1", 9 - controller.getConsumedStonesPlayer1())
+                            .put("Player2", 9 - controller.getConsumedStonesPlayer2())
+            );
+            LOGGER.info("Sending Message: " + responseBody.toString());
+            return complete(StatusCodes.OK, responseBody.toString());
         } else {
             return complete(StatusCodes.METHOD_NOT_ALLOWED);
         }

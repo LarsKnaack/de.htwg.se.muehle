@@ -19,6 +19,8 @@ import controller.IGamefieldGraphAdapter;
 import model.IMills;
 import model.impl.GamefieldGraph;
 import model.impl.Mills;
+import persistence.IGamefieldDAO;
+import persistence.db4o.GamefieldDb4oDAO;
 
 
 public class MuehleModule extends AbstractModule {
@@ -30,7 +32,7 @@ public class MuehleModule extends AbstractModule {
         bind(IMills.class).to(model.impl.Mills.class);
         bind(IController.class).to(controller.impl.Controller.class);
         bind(IGamefieldGraphAdapter.class).to(controller.impl.GamefieldAdapter.class);
-
+        bind(IGamefieldDAO.class).to(GamefieldDb4oDAO.class);
     }
 
     @Provides

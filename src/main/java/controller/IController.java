@@ -13,7 +13,7 @@ import observer.IObserver;
 public interface IController {
     /**
      * Set the stones
-     * @param Node
+     * @param vertex
      * @param color
      * @return Boolean state of succes
      * */
@@ -22,21 +22,21 @@ public interface IController {
 
     /**
      * move the stones
-     * @param Startnode, Endnode
+     * @param start, end
      * @return Boolean state of succes
      * */
     boolean moveStone(int start, int end);
 
     /**
      * Remove the stones
-     * @param Node
+     * @param vertex
      * @return Boolean state of succes
      * */
     boolean removeStone(int vertex);
 
     /**
      * Retuns the number of closed mills around one vertex
-     * @param Node
+     * @param vertex
      * @return Int number of closed mills*/
     int getAnzClosedMills(int vertex);
 
@@ -54,9 +54,9 @@ public interface IController {
 
     /**
      * function to delete Stones if one player gets a mill
-     * @param node to delete
+     * @param vertex to delete
      * */
-    void millDeleteStone(int vertex);
+    boolean millDeleteStone(int vertex);
 
     /**
      * returns the number of stones to delete, helps to delete stones if mills closed
@@ -95,13 +95,13 @@ public interface IController {
 
     /**
      * Register an observer
-     * @param IObserver
+     * @param observer
      * */
     void registerObserver(IObserver observer);
 
     /**
      * unregister an observer
-     * @param Iobserver
+     * @param observer
      * */
     void unregisterObserver(IObserver observer);
 
@@ -114,7 +114,7 @@ public interface IController {
     /**
      * moves a Stone, controler saves the param if it is the startvertex. To move, it is requiered to call move 2 times
      * ( moveStone(startNode); moveStone(endNode);
-     * @param int stone
+     * @param vertex stone
      * @return boolean state of succes
      * */
     boolean moveStone(int vertex);

@@ -196,11 +196,13 @@ public class Controller implements IController, IObservable {
     }
 
     @Override
-    public void millDeleteStone(int vertex) {
-        if (this.removeStone(vertex)) {
+    public boolean millDeleteStone(int vertex) {
+        boolean result = removeStone(vertex);
+        if (result) {
             this.currentStoneToDelete--;
         }
         this.updateObservers(vertex);
+        return result;
     }
 
 
