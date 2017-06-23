@@ -33,4 +33,16 @@ public interface IGamefieldGraph {
      * return List of integer with are next to v
      * */
     List<Integer> getAdjacencyList(int v);
+
+    /**
+     * get the id of the instance
+     * @return id
+     */
+    String getId();
+
+    /**
+     * set the id of the instance
+     * @param id
+     */
+    void setId(String id);
 }

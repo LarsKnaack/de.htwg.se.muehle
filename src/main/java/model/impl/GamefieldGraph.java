@@ -23,12 +23,15 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGraph {
 
     private static final int NUMBERVERTEX = 24;
     private List<List<Integer>> adjacencyList;
     private vertex vertexes[];
+
+    private String id;
 
     @Inject
     public GamefieldGraph() {
@@ -40,6 +43,8 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
 
         vertexes = new vertex[NUMBERVERTEX];
         createVertexes();
+
+        id = UUID.randomUUID().toString();
     }
 
     private void createVertexes() {
@@ -143,6 +148,14 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
 
     class vertex {
         private char color;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
 }

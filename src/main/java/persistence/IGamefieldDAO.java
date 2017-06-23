@@ -7,5 +7,8 @@ import model.IGamefieldGraph;
  */
 public interface IGamefieldDAO {
     void saveGameField(IGamefieldGraph gamefieldGraph);
+    boolean containsGamefieldGraphByID(String id);
     IGamefieldGraph getGamefieldById(String id);
+    void deleteGamefieldByID(String id);
 }
+

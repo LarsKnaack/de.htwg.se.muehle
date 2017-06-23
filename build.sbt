@@ -20,5 +20,6 @@ libraryDependencies ++= Seq(
   "log4j" % "log4j" % "1.2.17",
   "org.hibernate" % "hibernate-core" % "5.2.9.Final",
   "com.typesafe.akka" % "akka-actor_2.11" % "2.5.2",
-  "junit" % "junit" % "4.12" % "test"  // Test-only dependency
+  "junit" % "junit" % "4.12" % "test",  // Test-only dependency
+  "com.db4o" % "com.db4o" % "7.7.67"
 )
