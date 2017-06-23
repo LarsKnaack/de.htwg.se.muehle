@@ -11,7 +11,7 @@ package game;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import controller.IController;
-import view.Tui;
+import view.tui.Tui;
 import view.gui.Gui;
 
 import java.util.Scanner;

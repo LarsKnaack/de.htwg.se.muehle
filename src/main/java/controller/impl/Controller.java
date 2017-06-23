@@ -16,11 +16,10 @@ import model.IPlayer;
 import model.impl.Player;
 import observer.IObservable;
 import observer.IObserver;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Controller implements IController, IObservable {
 
@@ -31,12 +30,14 @@ public class Controller implements IController, IObservable {
     private final List<IObserver> observers = new ArrayList<IObserver>();
     private IGamefieldGraphAdapter gamefield;
     private IPlayer player1, player2, current;
-    private int stonesPlayer1, settedStonesPlayer1;
-    private int stonesPlayer2, settedStonesPlayer2;
+    private int stonesPlayer1, consumedStonesPlayer1;
+    private int stonesPlayer2, consumedStonesPlayer2;
     private int settedStones;
     private String playerWon;
     private int currentStoneToDelete;
     private int selected;
+    private volatile Object shutdownSwitch;
+    private Logger LOGGER;
 
     @Inject
     public Controller(IGamefieldGraphAdapter pGamefield) {
@@ -51,13 +52,13 @@ public class Controller implements IController, IObservable {
         this.playerWon = "";
         this.currentStoneToDelete = 0;
         this.selected = 0;
-        this.settedStonesPlayer1 = 0;
-        this.settedStonesPlayer2 = 0;
+        this.consumedStonesPlayer1 = 0;
+        this.consumedStonesPlayer2 = 0;
     }
 
     @Override
-    public boolean setStone(int vertex) {
-        boolean temp = gamefield.setStone(vertex, getCurrentPlayerColor());
+    public boolean setStone(int vertex, char color) {
+        boolean temp = gamefield.setStone(vertex, color);
 
         if (temp) {
             settedStones++;
@@ -69,20 +70,25 @@ public class Controller implements IController, IObservable {
     }
 
     @Override
-    public int getSettedStonesPlayer1() {
-        return this.settedStonesPlayer1;
+    public boolean setStone(int vertex) {
+        return setStone(vertex, getCurrentPlayerColor());
     }
 
     @Override
-    public int getSettedStonesPlayer2() {
-        return this.settedStonesPlayer2;
+    public int getConsumedStonesPlayer1() {
+        return this.consumedStonesPlayer1;
+    }
+
+    @Override
+    public int getConsumedStonesPlayer2() {
+        return this.consumedStonesPlayer2;
     }
 
     private void incSettedStonesPlayer() {
         if (current.equals(player1)) {
-            this.settedStonesPlayer1++;
+            this.consumedStonesPlayer1++;
         } else {
-            this.settedStonesPlayer2++;
+            this.consumedStonesPlayer2++;
         }
     }
 
@@ -195,7 +201,6 @@ public class Controller implements IController, IObservable {
             this.currentStoneToDelete--;
         }
         this.updateObservers(vertex);
-
     }
 
 
@@ -230,16 +235,14 @@ public class Controller implements IController, IObservable {
         }
     }
 
-    public Map getVertexMap() {
-        Map<Integer, Character> map = new HashMap();
-
+    @Override
+    public String getGamefieldString() {
+        StringBuilder sb = new StringBuilder();
         for (int i = 1; i <= 24; ++i) {
-            map.put(i, this.getVertexColor(i));
+            sb.append(this.getVertexColor(i));
         }
-
-        return map;
+        return sb.toString();
     }
-
 
     class endThread extends Thread {
         public void run() {

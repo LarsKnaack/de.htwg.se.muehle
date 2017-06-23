@@ -10,14 +10,14 @@ package controller;
 
 import observer.IObserver;
 
-import java.util.Map;
-
 public interface IController {
     /**
      * Set the stones
      * @param Node
+     * @param color
      * @return Boolean state of succes
      * */
+    boolean setStone(int vertex, char color);
     boolean setStone(int vertex);
 
     /**
@@ -123,16 +123,16 @@ public interface IController {
      * returns the stones already set by player1
      * @return int already setted Stones
      * */
-    int getSettedStonesPlayer1();
+    int getConsumedStonesPlayer1();
 
     /**
      * returns the stones already set by player2
      * @return int already setted Stones
      * */
-    int getSettedStonesPlayer2();
+    int getConsumedStonesPlayer2();
 
     /**
      * TODO: Find better way
      */
-    Map getVertexMap();
+    String getGamefieldString();
 }

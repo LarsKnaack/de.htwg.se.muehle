@@ -12,7 +12,6 @@ import controller.IController;
 import model.IPlayer;
 import observer.IObserver;
 
-import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.*;
 
@@ -87,7 +86,7 @@ public class Gui extends JFrame implements IObserver {
 
     private void setStonesPlayer2() {
         stonesPlayer2 = new JLabel("Steine Player2", JLabel.CENTER);
-        anzStonesPlayer2 = new JLabel("" + (STONESPLAYERMAX - controller.getSettedStonesPlayer2()));
+        anzStonesPlayer2 = new JLabel("" + (STONESPLAYERMAX - controller.getConsumedStonesPlayer2()));
         anzStonesPlayer2.setFont(new Font("SANS_SERIF", Font.ITALIC, FSIZEANZSTONES));
         stonesPlayer2.setBackground(Color.YELLOW);
         stonesPlayer2.setForeground(Color.BLACK);
@@ -97,7 +96,7 @@ public class Gui extends JFrame implements IObserver {
 
     private void setstonesPlayer1() {
         stonesPlayer1 = new JLabel("Steine Player1", JLabel.CENTER);
-        anzStonesPlayer1 = new JLabel("" + (STONESPLAYERMAX - controller.getSettedStonesPlayer1()));
+        anzStonesPlayer1 = new JLabel("" + (STONESPLAYERMAX - controller.getConsumedStonesPlayer1()));
         anzStonesPlayer1.setFont(new Font("SANS_SERIF", Font.ITALIC, FSIZEANZSTONES));
         stonesPlayer1.setBackground(Color.YELLOW);
         stonesPlayer1.setForeground(Color.BLACK);
@@ -135,8 +134,8 @@ public class Gui extends JFrame implements IObserver {
 
     @Override
     public void update(IPlayer currentPlayer, int anzMills, boolean gameEnded) {
-        this.anzStonesPlayer1.setText("" + (STONESPLAYERMAX - controller.getSettedStonesPlayer1()));
-        this.anzStonesPlayer2.setText("" + (STONESPLAYERMAX - controller.getSettedStonesPlayer2()));
+        this.anzStonesPlayer1.setText("" + (STONESPLAYERMAX - controller.getConsumedStonesPlayer1()));
+        this.anzStonesPlayer2.setText("" + (STONESPLAYERMAX - controller.getConsumedStonesPlayer2()));
         if (gameEnded) {
             this.setPlayerinfo(currentPlayer.getName(), " hat gewonnen!");
         } else if (anzMills > 0) {

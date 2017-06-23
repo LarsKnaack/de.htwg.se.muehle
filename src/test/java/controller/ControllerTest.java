@@ -27,14 +27,14 @@ public class ControllerTest {
 
     @Test
     public void testgetSettedStonesPlayer1() {
-        assertEquals(0, control.getSettedStonesPlayer1());
+        assertEquals(0, control.getConsumedStonesPlayer1());
     }
 
     @Test
     public void testgetSettedStonesPlayer2() {
         control.setStone(3);
         control.setStone(2);
-        assertEquals(1, control.getSettedStonesPlayer2());
+        assertEquals(1, control.getConsumedStonesPlayer2());
     }
 
     @Test
