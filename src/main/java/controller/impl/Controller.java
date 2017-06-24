@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Controller implements IController, IObservable {
-
     private static final int MINSTONES = 3;
     private static final int ANZSTONESGES = 18;
     private static final int STONESPLAYER = 9;

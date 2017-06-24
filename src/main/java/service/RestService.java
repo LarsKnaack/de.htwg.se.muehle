@@ -14,10 +14,9 @@ import akka.stream.ActorMaterializer;
 import akka.stream.javadsl.Flow;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.inject.Guice;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import controller.IController;
-import game.MuehleModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +26,7 @@ import static akka.http.javadsl.server.PathMatchers.integerSegment;
 import static akka.http.javadsl.server.PathMatchers.segment;
 
 
+@Singleton
 public class RestService extends AllDirectives {
 
     private static volatile Object shutdownSwitch;
@@ -36,17 +36,19 @@ public class RestService extends AllDirectives {
 
     @Inject
     public RestService(IController controller) {
-        this.controller = controller;
         LOGGER = LoggerFactory.getLogger(this.getClass());
+        this.controller = controller;
         shutdownSwitch = new Object();
+
+        Thread thread = new Thread(this::startRestService);
+        thread.start();
     }
 
-    public static void main(String[] args) {
+    private synchronized void startRestService() {
         ActorSystem actorSystem = ActorSystem.create("routes");
         Http http = Http.get(actorSystem);
         final ActorMaterializer materializer = ActorMaterializer.create(actorSystem);
-        RestService app = Guice.createInjector(new MuehleModule()).getInstance(RestService.class);
-        final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = app.createRoute().flow(actorSystem, materializer);
+        final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = this.createRoute().flow(actorSystem, materializer);
         final CompletionStage<ServerBinding> binding = http.bindAndHandle(routeFlow,
                 ConnectHttp.toHost(Endpoints.BASE_HOST, Endpoints.BASE_PORT), materializer);
         LOGGER.info("Server online at " + Endpoints.BASE_URL + "\n");
