@@ -8,14 +8,14 @@ scalaVersion := "2.11.11"
 // project description
 description := "Project for the Lectures SE and SA"
 
-//Added strict conflict manager for akka dependency mess
-conflictManager := ConflictManager.strict
-
 resolvers += "Restlet" at "http://maven.restlet.org/"
 
-// library dependencies. (organization name) % (project name) % (version)
+lazy val root = (project in file("."))
+  .enablePlugins(PlayJava)
+  .disablePlugins(PlayFilters)
+
 libraryDependencies ++= Seq(
-  "com.google.inject" % "guice" % "4.1.0",
+  guice,
   "org.javassist" % "javassist" % "3.21.0-GA", // dependency for play-enhancer
 
   //JSON Dependencies
@@ -42,13 +42,5 @@ libraryDependencies ++= Seq(
   //Test dependencies
   "com.typesafe.akka" %% "akka-http-testkit" % "10.0.7" % Test,
   "junit" % "junit" % "4.12" % Test
-)
 
-//Overriding dependencies to solve dependency conflicts
-dependencyOverrides += "com.typesafe.akka" %% "akka-actor" % "2.5.2"
-dependencyOverrides += "com.typesafe.akka" %% "akka-stream" % "2.5.2"
-dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.8.9"
-dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-annotations" % "2.8.9"
-dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.9"
-dependencyOverrides += "org.slf4j" % "slf4j-api" % "1.7.25"
-dependencyOverrides += "org.javassist" % "javassist" % "3.21.0-GA"
+)
