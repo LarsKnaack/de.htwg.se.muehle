@@ -35,6 +35,7 @@ public class RestController extends Controller {
     }
 
     public Result handleInput(int vertex) {
+        System.out.println("HandleInput");
         boolean success;
         if(morrisController.getCurrentStonesToDelete() > 0) {
             success = morrisController.millDeleteStone(vertex);
