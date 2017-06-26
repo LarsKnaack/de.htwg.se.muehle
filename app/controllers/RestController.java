@@ -27,7 +27,7 @@ public class RestController extends Controller {
     }
 
     public Result index() {
-        return ok(views.html.index.render());
+        return ok(views.html.morrisindex.render());
     }
 
     public Result update() {
