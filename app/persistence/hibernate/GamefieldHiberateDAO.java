@@ -3,6 +3,7 @@ package persistence.hibernate;
 import java.util.ArrayList;
 import java.util.List;
 
+import controllers.IGamefieldGraphAdapter;
 import models.impl.GamefieldGraph;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -10,28 +11,29 @@ import org.hibernate.Transaction;
 
 import persistence.IGamefieldDAO;
 import models.IGamefieldGraph;
+import play.api.Play;
 
 /**
  * Created by Lars on 04.04.2017.
  */
 public class GamefieldHiberateDAO implements IGamefieldDAO{
 
-    private IGamefieldGraph copyGamefieldGraph(PersistentGamefield pgamefieldGraph) {
+    private IGamefieldGraphAdapter copyGamefieldGraph(PersistentGamefield pgamefieldGraph) {
         if(pgamefieldGraph == null) {
             return null;
         }
 
-        IGamefieldGraph gamefieldGraph = new GamefieldGraph();
+        IGamefieldGraphAdapter gamefieldGraph = Play.current().asJava().injector().instanceOf(IGamefieldGraphAdapter.class);
         gamefieldGraph.setId(pgamefieldGraph.getId());
 
         for (PersistentVertex vertex : pgamefieldGraph.getVertexs()) {
-            gamefieldGraph.setStoneVertex(vertex.getVertex(), vertex.getColor());
+            gamefieldGraph.setStone(vertex.getVertex(), vertex.getColor());
         }
 
         return gamefieldGraph;
     }
 
-    private PersistentGamefield copyGamefieldGraph(IGamefieldGraph gamefieldGraph) {
+    private PersistentGamefield copyGamefieldGraph(IGamefieldGraphAdapter gamefieldGraph) {
         if (gamefieldGraph == null) {
             return null;
         }
@@ -46,7 +48,7 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
             for(PersistentVertex vertex : vertexs) {
                 Integer v = vertex.getVertex();
 
-                vertex.setColor(gamefieldGraph.getStoneColorVertex(v));
+                vertex.setColor(gamefieldGraph.getColor(v));
             }
         } else {
             pgamefieldGraph = new PersistentGamefield();
@@ -54,7 +56,7 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
             List<PersistentVertex> vertexs = new ArrayList<PersistentVertex>();
 
             for(int i = 0; i < 24; i++) {
-                char color = gamefieldGraph.getStoneColorVertex(i);
+                char color = gamefieldGraph.getColor(i);
 
                 PersistentVertex vertex = new PersistentVertex();
                 vertex.setVertex(i);
@@ -72,7 +74,7 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
 
 
     @Override
-    public void saveGameField(IGamefieldGraph gamefieldGraph) {
+    public void saveGameField(IGamefieldGraphAdapter gamefieldGraph) {
         Transaction tx = null;
         Session session = null;
 
@@ -93,7 +95,7 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
     }
 
     @Override
-    public IGamefieldGraph getGamefieldById(String id) {
+    public IGamefieldGraphAdapter getGamefieldById(String id) {
         Session session = HibernateUtil.getInstance().getCurrentSession();
         session.beginTransaction();
 

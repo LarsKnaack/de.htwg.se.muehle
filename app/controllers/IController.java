@@ -135,4 +135,15 @@ public interface IController {
      * TODO: Find better way
      */
     String getGamefieldString();
+
+    /**
+     * Load a grid from the database
+     * @param gamefieldId
+     */
+    void loadFromDB(String gamefieldId);
+
+    /**
+     * Save a grid to the database
+     */
+    void saveToDB();
 }

@@ -16,6 +16,7 @@ import models.impl.Player;
 import observer.IObservable;
 import observer.IObserver;
 import org.slf4j.Logger;
+import persistence.IGamefieldDAO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +38,10 @@ public class Controller implements IController, IObservable {
     private volatile Object shutdownSwitch;
     private Logger LOGGER;
 
+    private IGamefieldDAO gamefieldDAO;
+
     @Inject
-    public Controller(IGamefieldGraphAdapter pGamefield) {
+    public Controller(IGamefieldGraphAdapter pGamefield, IGamefieldDAO gamefieldDAO) {
         this.gamefield = pGamefield;
 
         this.player1 = new Player("Player1", 'w');
@@ -52,6 +55,18 @@ public class Controller implements IController, IObservable {
         this.selected = 0;
         this.consumedStonesPlayer1 = 0;
         this.consumedStonesPlayer2 = 0;
+
+        this.gamefieldDAO = gamefieldDAO;
+    }
+
+    @Override
+    public void loadFromDB(String gamefieldId) {
+        this.gamefield = this.gamefieldDAO.getGamefieldById(gamefieldId);
+    }
+
+    @Override
+    public void saveToDB() {
+        this.gamefieldDAO.saveGameField(gamefield);
     }
 
     @Override

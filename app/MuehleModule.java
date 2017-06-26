@@ -27,6 +27,9 @@ public class MuehleModule extends AbstractModule {
     protected void configure() {
         bind(IMills.class).to(models.impl.Mills.class);
         bind(IController.class).to(controllers.impl.Controller.class);
+//      bind(IGamefieldDAO.class).to(persistence.couchdb.GamefieldGraphCouchdbDAO.class);
+		bind(IGamefieldDAO.class).to(persistence.db4o.GamefieldDb4oDAO.class);
+//      bind(IGamefieldDAO.class).to(persistence.hibernate.GamefieldHiberateDAO.class);
         bind(IGamefieldGraphAdapter.class).to(controllers.impl.GamefieldAdapter.class);
         bind(IGamefieldDAO.class).to(GamefieldDb4oDAO.class);
     }

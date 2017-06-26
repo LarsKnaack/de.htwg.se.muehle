@@ -9,6 +9,7 @@
 package game;
 
 import controllers.IController;
+import controllers.RestController;
 import play.api.Play;
 import play.api.inject.Injector;
 import views.tui.Tui;

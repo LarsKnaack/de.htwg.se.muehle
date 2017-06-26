@@ -4,6 +4,7 @@ import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.db4o.query.Predicate;
 
+import controllers.IGamefieldGraphAdapter;
 import persistence.IGamefieldDAO;
 import models.IGamefieldGraph;
 import java.util.List;
@@ -21,16 +22,14 @@ public class GamefieldDb4oDAO implements IGamefieldDAO {
     }
 
     @Override
-    public void saveGameField(IGamefieldGraph gamefieldGraph) {
+    public void saveGameField(IGamefieldGraphAdapter gamefieldGraph) {
         db.store(gamefieldGraph);
     }
 
     @Override
-    public IGamefieldGraph getGamefieldById(String id) {
-        List<IGamefieldGraph> gamefieldGraphs = db.query(new Predicate<IGamefieldGraph>() {
-            private static final long serialVersionUID = 1L;
-
-            public boolean match(IGamefieldGraph gamefieldGraph) {
+    public IGamefieldGraphAdapter getGamefieldById(String id) {
+        List<IGamefieldGraphAdapter> gamefieldGraphs = db.query(new Predicate<IGamefieldGraphAdapter>() {
+            public boolean match(IGamefieldGraphAdapter gamefieldGraph) {
                 return (id.equals(gamefieldGraph.getId()));
             }
         });
@@ -43,10 +42,10 @@ public class GamefieldDb4oDAO implements IGamefieldDAO {
 
     @Override
     public boolean containsGamefieldGraphByID(String id) {
-        List<IGamefieldGraph> gamefields = db.query(new Predicate<IGamefieldGraph>() {
+        List<IGamefieldGraphAdapter> gamefields = db.query(new Predicate<IGamefieldGraphAdapter>() {
             private static final long serialVersionUID = 1L;
 
-            public boolean match(IGamefieldGraph gamefieldGraph) {
+            public boolean match(IGamefieldGraphAdapter gamefieldGraph) {
                 return (gamefieldGraph.getId().equals(id));
             }
 

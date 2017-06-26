@@ -23,6 +23,7 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class GamefieldAdapter implements IGamefieldGraphAdapter {
@@ -33,10 +34,14 @@ public class GamefieldAdapter implements IGamefieldGraphAdapter {
 
     private ActorRef gamefieldActor;
 
+    private String id;
+
     @Inject
     public GamefieldAdapter(ActorSystem system) {
         millsActor = system.actorOf(Props.create(Mills.class));
         gamefieldActor = system.actorOf(Props.create(GamefieldGraph.class));
+
+        id = UUID.randomUUID().toString();
     }
 
     @Override
@@ -98,5 +103,13 @@ public class GamefieldAdapter implements IGamefieldGraphAdapter {
             System.exit(1);
         }
         return null;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

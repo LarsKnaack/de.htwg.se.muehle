@@ -1,7 +1,6 @@
 package persistence.couchdb;
 
-import models.IGamefieldGraph;
-import models.impl.GamefieldGraph;
+import controllers.IGamefieldGraphAdapter;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.http.HttpClient;
@@ -10,6 +9,7 @@ import org.ektorp.impl.StdCouchDbInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import persistence.IGamefieldDAO;
+import play.api.Play;
 
 import java.net.MalformedURLException;
 import java.util.HashSet;
@@ -34,24 +34,25 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
         db.createDatabaseIfNotExists();
     }
 
-    private IGamefieldGraph copyGamefieldGraph(PersistentGamefieldGraph pgamefield) {
+    private IGamefieldGraphAdapter copyGamefieldGraph(PersistentGamefieldGraph pgamefield) {
         if (pgamefield == null) {
             return null;
         }
-        IGamefieldGraph gamefieldGraph = new GamefieldGraph();
+        IGamefieldGraphAdapter gamefieldGraph = Play.current().asJava().injector().instanceOf(IGamefieldGraphAdapter.class);
+
         gamefieldGraph.setId(pgamefield.getId());
 
         for (PersistentVertex vertex : pgamefield.getVertexs()) {
             int v = vertex.getVertex();
             char color = vertex.getColor();
 
-            gamefieldGraph.setStoneVertex(v, color);
+            gamefieldGraph.setStone(v, color);
         }
 
         return gamefieldGraph;
     }
 
-    private PersistentGamefieldGraph copyGamefieldGraph(IGamefieldGraph gamefieldGraph) {
+    private PersistentGamefieldGraph copyGamefieldGraph(IGamefieldGraphAdapter gamefieldGraph) {
         if (gamefieldGraph == null) {
             return null;
         }
@@ -66,7 +67,7 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
             for (PersistentVertex vertex : pGamefieldGraph.getVertexs()) {
                 Integer v = vertex.getVertex();
 
-                vertex.setColor(gamefieldGraph.getStoneColorVertex(v));
+                vertex.setColor(gamefieldGraph.getColor(v));
             }
 
         } else {
@@ -76,7 +77,7 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
             Set<PersistentVertex> vertexs = new HashSet<PersistentVertex>();
 
             for(int i = 0; i < 24; i++) {
-                char color = gamefieldGraph.getStoneColorVertex(i);
+                char color = gamefieldGraph.getColor(i);
 
                 PersistentVertex vertex = new PersistentVertex();
                 vertex.setVertex(i);
@@ -94,7 +95,7 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
     }
 
     @Override
-    public void saveGameField(IGamefieldGraph gamefieldGraph) {
+    public void saveGameField(IGamefieldGraphAdapter gamefieldGraph) {
         if (containsGamefieldGraphByID(gamefieldGraph.getId())) {
             db.update(copyGamefieldGraph(gamefieldGraph));
         } else {
@@ -112,7 +113,7 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
 
 
     @Override
-    public IGamefieldGraph getGamefieldById(String id) {
+    public IGamefieldGraphAdapter getGamefieldById(String id) {
         PersistentGamefieldGraph g = db.find(PersistentGamefieldGraph.class, id);
         if (g == null) {
             return null;

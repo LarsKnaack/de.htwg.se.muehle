@@ -31,8 +31,6 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
     private List<List<Integer>> adjacencyList;
     private vertex vertexes[];
 
-    private String id;
-
     @Inject
     public GamefieldGraph() {
         adjacencyList = new ArrayList<>(NUMBERVERTEX);
@@ -43,8 +41,6 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
 
         vertexes = new vertex[NUMBERVERTEX];
         createVertexes();
-
-        id = UUID.randomUUID().toString();
     }
 
     private void createVertexes() {
@@ -148,14 +144,6 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
 
     class vertex {
         private char color;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
 }
