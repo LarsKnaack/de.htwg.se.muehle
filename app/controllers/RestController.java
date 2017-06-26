@@ -29,8 +29,47 @@ public class RestController extends Controller {
     public Result index() {
         return ok(views.html.index.render());
     }
+
     public Result update() {
         return ok(createJsonBody());
+    }
+
+    public Result handleInput(int vertex) {
+        boolean success;
+        if(morrisController.getCurrentStonesToDelete() > 0) {
+            success = morrisController.millDeleteStone(vertex);
+        } else if(morrisController.requireInitial()) {
+            success = morrisController.setStone(vertex);
+        } else {
+            success = morrisController.moveStone(vertex);
+        }
+        if(success) {
+            return ok(createJsonBody());
+        } else {
+            return badRequest();
+        }
+    }
+
+    public Result getVertexColor(int vertex) {
+        return ok(String.valueOf(morrisController.getVertexColor(vertex)));
+    }
+
+    public Result setVertexColor(int vertex, String color) {
+        boolean success = morrisController.setStone(vertex, color.charAt(0));
+        if(success) {
+            return ok(createJsonBody());
+        } else {
+            return badRequest();
+        }
+    }
+
+    public Result moveStone(int start, int end) {
+        boolean success = morrisController.moveStone(start, end);
+        if(success) {
+            return ok(createJsonBody());
+        } else {
+            return badRequest();
+        }
     }
 
     private JsonNode createJsonBody() {
