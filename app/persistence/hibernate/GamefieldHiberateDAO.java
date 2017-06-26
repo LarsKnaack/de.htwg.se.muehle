@@ -1,18 +1,15 @@
 package persistence.hibernate;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import controllers.IGamefieldGraphAdapter;
-import controllers.impl.GamefieldAdapter;
-import models.impl.GamefieldGraph;
+import models.IGamefieldGraph;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
 import persistence.IGamefieldDAO;
-import models.IGamefieldGraph;
+import persistence.db4o.GamefieldDTO;
 import play.api.Play;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Lars on 04.04.2017.
@@ -34,7 +31,7 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
         return gamefieldGraph;
     }
 
-    private PersistentGamefield copyGamefieldGraph(IGamefieldGraph gamefieldGraph) {
+    private PersistentGamefield copyGamefieldGraph(GamefieldDTO gamefieldGraph) {
         if (gamefieldGraph == null) {
             return null;
         }
@@ -75,7 +72,7 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
 
 
     @Override
-    public void saveGameField(IGamefieldGraph gamefieldGraph) {
+    public void saveGameField(GamefieldDTO gamefieldGraph) {
         Transaction tx = null;
         Session session = null;
 
@@ -96,11 +93,11 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
     }
 
     @Override
-    public IGamefieldGraph getGamefieldById(String id) {
+    public GamefieldDTO getGamefieldById(String id) {
         Session session = HibernateUtil.getInstance().getCurrentSession();
         session.beginTransaction();
-
-        return copyGamefieldGraph((PersistentGamefield) session.get(PersistentGamefield.class, id));
+        return null;
+        //TODO: return copyGamefieldGraph((PersistentGamefield) session.get(PersistentGamefield.class, id));
     }
 
     @Override

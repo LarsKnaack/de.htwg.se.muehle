@@ -6,13 +6,7 @@
  * @version 1.0
  */
 
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import controllers.IController;
 import controllers.IGamefieldGraphAdapter;
 import models.IMills;
@@ -23,7 +17,6 @@ import play.libs.akka.AkkaGuiceSupport;
 
 public class MuehleModule extends AbstractModule implements AkkaGuiceSupport {
 
-    static ActorSystem system = ActorSystem.create("MySystem");
     @Override
     protected void configure() {
         bindActor(GamefieldGraph.class, "gamefieldActor");

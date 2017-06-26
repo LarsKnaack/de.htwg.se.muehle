@@ -1,6 +1,5 @@
 package persistence.couchdb;
 
-import models.impl.GamefieldGraph;
 import models.IGamefieldGraph;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
@@ -10,6 +9,7 @@ import org.ektorp.impl.StdCouchDbInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import persistence.IGamefieldDAO;
+import persistence.db4o.GamefieldDTO;
 import play.api.Play;
 
 import java.net.MalformedURLException;
@@ -54,7 +54,7 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
         return gamefieldGraph;
     }
 
-    private PersistentGamefieldGraph copyGamefieldGraph(IGamefieldGraph gamefieldGraph) {
+    private PersistentGamefieldGraph copyGamefieldGraph(GamefieldDTO gamefieldGraph) {
         if (gamefieldGraph == null) {
             return null;
         }
@@ -97,7 +97,8 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
     }
 
     @Override
-    public void saveGameField(IGamefieldGraph gamefieldGraph) {
+    public void saveGameField(GamefieldDTO gamefieldGraph) {
+
         if (containsGamefieldGraphByID(gamefieldGraph.getId())) {
             db.update(copyGamefieldGraph(gamefieldGraph));
         } else {
@@ -115,17 +116,19 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
 
 
     @Override
-    public IGamefieldGraph getGamefieldById(String id) {
+    public GamefieldDTO getGamefieldById(String id) {
         PersistentGamefieldGraph g = db.find(PersistentGamefieldGraph.class, id);
         if (g == null) {
             return null;
         }
-        return copyGamefieldGraph(g);
+        return null;
+        //TODO: return copyGamefieldGraph(g);
     }
 
     @Override
     public void deleteGamefieldByID(String id) {
-        db.delete(copyGamefieldGraph(getGamefieldById((id))));
+
+        //TODO: db.delete(copyGamefieldGraph(getGamefieldById((id))));
     }
 
 

@@ -8,15 +8,15 @@
 
 package models.impl;
 
+import akka.actor.UntypedAbstractActor;
 import com.google.inject.Inject;
 import messages.BoolAnswer;
 import messages.GetStoneColorMessage;
 import messages.MsgMoveStone;
 import messages.SetStoneVertexRequest;
-import akka.actor.UntypedAbstractActor;
 import models.IGamefieldGraph;
 import persistence.IGamefieldDAO;
-import persistence.db4o.GamefieldDb4oDAO;
+import persistence.db4o.GamefieldDTO;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGraph {
 
@@ -40,25 +39,25 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
 
     public GamefieldGraph() {
         adjacencyList = new ArrayList<>(NUMBERVERTEX);
+        vertexes = new vertex[NUMBERVERTEX];
         for (int i = 0; i < NUMBERVERTEX; i++) {
             adjacencyList.add(new LinkedList<>());
         }
         createEdges();
 
-        vertexes = new vertex[NUMBERVERTEX];
         createVertexes();
 
-        id = UUID.randomUUID().toString();
+        id = "bac0680a-d4e7-4aac-94cc-8025f5952f42";
+        System.out.println("GamefieldID: " + id);
     }
 
     @Override
     public void saveToDB() {
-        gamefieldDAO.saveGameField(this);
     }
 
     @Override
     public void loadFromDB(String gamefieldId) {
-        IGamefieldGraph graph = this.gamefieldDAO.getGamefieldById(gamefieldId);
+        GamefieldDTO graph = this.gamefieldDAO.getGamefieldById(gamefieldId);
         for(int i= 0; i < NUMBERVERTEX; i++) {
             this.adjacencyList.set(i, graph.getAdjacencyList(i));
             vertexes[i] = new vertex();
@@ -129,12 +128,22 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
         } else if(message instanceof SetStoneVertexRequest) {
             answer = receiveMsgSetStoneVertex((SetStoneVertexRequest) message);
             getSender().tell(new BoolAnswer(answer), getSelf());
+            updateDB();
         } else if( message instanceof MsgMoveStone) {
             answer = receiveMsgMoveStone((MsgMoveStone) message);
             getSender().tell(new BoolAnswer(answer), getSelf());
+            updateDB();
         }
-        saveToDB();
     }
+
+    private void updateDB() {
+        //System.out.println(gamefieldDAO.getGamefieldById(getId()));
+        if(gamefieldDAO.containsGamefieldGraphByID(getId())) {
+            gamefieldDAO.deleteGamefieldByID(getId());
+        }
+        gamefieldDAO.saveGameField(new GamefieldDTO(this));
+    }
+
 
     private boolean receiveMsgMoveStone(MsgMoveStone message) {
         //TODO: Create Enum for Colors to avoid checking
