@@ -40,7 +40,7 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
             return null;
         }
 
-        IGamefieldGraph gamefieldGraph = new GamefieldGraph();
+        IGamefieldGraph gamefieldGraph = Play.current().injector().instanceOf(IGamefieldGraph.class);
 
         gamefieldGraph.setId(pgamefield.getId());
 

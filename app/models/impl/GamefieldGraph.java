@@ -8,6 +8,7 @@
 
 package models.impl;
 
+import com.google.inject.Inject;
 import messages.BoolAnswer;
 import messages.GetStoneColorMessage;
 import messages.MsgMoveStone;
@@ -32,13 +33,12 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
     private List<List<Integer>> adjacencyList;
     private vertex vertexes[];
 
+    @Inject
     private IGamefieldDAO gamefieldDAO;
 
     private String id;
 
     public GamefieldGraph() {
-        gamefieldDAO = GamefieldDb4oDAO.getInstance();
-
         adjacencyList = new ArrayList<>(NUMBERVERTEX);
         for (int i = 0; i < NUMBERVERTEX; i++) {
             adjacencyList.add(new LinkedList<>());
@@ -49,8 +49,6 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
         createVertexes();
 
         id = UUID.randomUUID().toString();
-
-
     }
 
     @Override
@@ -135,6 +133,7 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
             answer = receiveMsgMoveStone((MsgMoveStone) message);
             getSender().tell(new BoolAnswer(answer), getSelf());
         }
+        saveToDB();
     }
 
     private boolean receiveMsgMoveStone(MsgMoveStone message) {

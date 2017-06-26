@@ -31,15 +31,13 @@ public class GamefieldAdapter implements IGamefieldGraphAdapter {
 
     private static final int MAXVERTEX = 24;
 
+    @Inject
+    @Named("millsActor")
     private ActorRef millsActor;
 
-    private ActorRef gamefieldActor;
-
     @Inject
-    public GamefieldAdapter(ActorSystem system) {
-        millsActor = system.actorOf(Props.create(Mills.class));
-        gamefieldActor = system.actorOf(Props.create(GamefieldGraph.class));
-    }
+    @Named("gamefieldActor")
+    private ActorRef gamefieldActor;
 
     @Override
     public boolean setStone(int vertex, char color) {

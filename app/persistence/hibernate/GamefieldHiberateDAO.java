@@ -24,7 +24,7 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
             return null;
         }
 
-        IGamefieldGraph gamefieldGraph = new GamefieldGraph();
+        IGamefieldGraph gamefieldGraph = Play.current().injector().instanceOf(IGamefieldGraph.class);
         gamefieldGraph.setId(pgamefieldGraph.getId());
 
         for (PersistentVertex vertex : pgamefieldGraph.getVertexs()) {

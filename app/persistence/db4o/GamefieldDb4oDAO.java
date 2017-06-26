@@ -19,17 +19,10 @@ public class GamefieldDb4oDAO implements IGamefieldDAO {
 
     private ObjectContainer db;
 
-    private static GamefieldDb4oDAO dao;
-    private GamefieldDb4oDAO() {
+    //private static GamefieldDb4oDAO dao;
+    public GamefieldDb4oDAO() {
         db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(),
                 "gamefieldGraph.data");
-    }
-
-    public static GamefieldDb4oDAO getInstance() {
-        if(dao == null) {
-            dao = new GamefieldDb4oDAO();
-        }
-        return dao;
     }
 
     @Override
