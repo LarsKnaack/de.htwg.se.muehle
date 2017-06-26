@@ -4,7 +4,9 @@ import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.db4o.query.Predicate;
 
+import com.google.inject.Singleton;
 import controllers.IGamefieldGraphAdapter;
+import models.impl.GamefieldGraph;
 import persistence.IGamefieldDAO;
 import models.IGamefieldGraph;
 import java.util.List;
@@ -12,24 +14,33 @@ import java.util.List;
 /**
  * Created by Thomas on 16.06.2017.
  */
+@Singleton
 public class GamefieldDb4oDAO implements IGamefieldDAO {
 
     private ObjectContainer db;
 
-    public GamefieldDb4oDAO() {
+    private static GamefieldDb4oDAO dao;
+    private GamefieldDb4oDAO() {
         db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(),
                 "gamefieldGraph.data");
     }
 
+    public static GamefieldDb4oDAO getInstance() {
+        if(dao == null) {
+            dao = new GamefieldDb4oDAO();
+        }
+        return dao;
+    }
+
     @Override
-    public void saveGameField(IGamefieldGraphAdapter gamefieldGraph) {
+    public void saveGameField(IGamefieldGraph gamefieldGraph) {
         db.store(gamefieldGraph);
     }
 
     @Override
-    public IGamefieldGraphAdapter getGamefieldById(String id) {
-        List<IGamefieldGraphAdapter> gamefieldGraphs = db.query(new Predicate<IGamefieldGraphAdapter>() {
-            public boolean match(IGamefieldGraphAdapter gamefieldGraph) {
+    public IGamefieldGraph getGamefieldById(String id) {
+        List<IGamefieldGraph> gamefieldGraphs = db.query(new Predicate<IGamefieldGraph>() {
+            public boolean match(IGamefieldGraph gamefieldGraph) {
                 return (id.equals(gamefieldGraph.getId()));
             }
         });
@@ -42,10 +53,10 @@ public class GamefieldDb4oDAO implements IGamefieldDAO {
 
     @Override
     public boolean containsGamefieldGraphByID(String id) {
-        List<IGamefieldGraphAdapter> gamefields = db.query(new Predicate<IGamefieldGraphAdapter>() {
+        List<IGamefieldGraph> gamefields = db.query(new Predicate<IGamefieldGraph>() {
             private static final long serialVersionUID = 1L;
 
-            public boolean match(IGamefieldGraphAdapter gamefieldGraph) {
+            public boolean match(IGamefieldGraph gamefieldGraph) {
                 return (gamefieldGraph.getId().equals(id));
             }
 

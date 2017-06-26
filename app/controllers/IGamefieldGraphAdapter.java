@@ -55,15 +55,4 @@ public interface IGamefieldGraphAdapter {
     int numberOfMills(int v, char c);
 
 
-    /**
-     * get the id of the instance
-     * @return id
-     */
-    String getId();
-
-    /**
-     * set the id of the instance
-     * @param id
-     */
-    void setId(String id);
 }

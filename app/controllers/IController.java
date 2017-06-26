@@ -136,14 +136,5 @@ public interface IController {
      */
     String getGamefieldString();
 
-    /**
-     * Load a grid from the database
-     * @param gamefieldId
-     */
-    void loadFromDB(String gamefieldId);
 
-    /**
-     * Save a grid to the database
-     */
-    void saveToDB();
 }

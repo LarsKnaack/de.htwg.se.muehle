@@ -13,8 +13,9 @@ import messages.GetStoneColorMessage;
 import messages.MsgMoveStone;
 import messages.SetStoneVertexRequest;
 import akka.actor.UntypedAbstractActor;
-import com.google.inject.Inject;
 import models.IGamefieldGraph;
+import persistence.IGamefieldDAO;
+import persistence.db4o.GamefieldDb4oDAO;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,8 +32,13 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
     private List<List<Integer>> adjacencyList;
     private vertex vertexes[];
 
-    @Inject
+    private IGamefieldDAO gamefieldDAO;
+
+    private String id;
+
     public GamefieldGraph() {
+        gamefieldDAO = GamefieldDb4oDAO.getInstance();
+
         adjacencyList = new ArrayList<>(NUMBERVERTEX);
         for (int i = 0; i < NUMBERVERTEX; i++) {
             adjacencyList.add(new LinkedList<>());
@@ -41,6 +47,25 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
 
         vertexes = new vertex[NUMBERVERTEX];
         createVertexes();
+
+        id = UUID.randomUUID().toString();
+
+
+    }
+
+    @Override
+    public void saveToDB() {
+        gamefieldDAO.saveGameField(this);
+    }
+
+    @Override
+    public void loadFromDB(String gamefieldId) {
+        IGamefieldGraph graph = this.gamefieldDAO.getGamefieldById(gamefieldId);
+        for(int i= 0; i < NUMBERVERTEX; i++) {
+            this.adjacencyList.set(i, graph.getAdjacencyList(i));
+            vertexes[i] = new vertex();
+            vertexes[i].color = graph.getStoneColorVertex(i);
+        }
     }
 
     private void createVertexes() {
@@ -144,6 +169,14 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
 
     class vertex {
         private char color;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
 }

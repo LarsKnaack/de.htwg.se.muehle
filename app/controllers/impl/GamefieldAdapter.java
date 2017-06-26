@@ -19,6 +19,7 @@ import controllers.IGamefieldGraphAdapter;
 import messages.*;
 import models.impl.GamefieldGraph;
 import models.impl.Mills;
+import play.api.Play;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 
@@ -34,14 +35,10 @@ public class GamefieldAdapter implements IGamefieldGraphAdapter {
 
     private ActorRef gamefieldActor;
 
-    private String id;
-
     @Inject
     public GamefieldAdapter(ActorSystem system) {
         millsActor = system.actorOf(Props.create(Mills.class));
         gamefieldActor = system.actorOf(Props.create(GamefieldGraph.class));
-
-        id = UUID.randomUUID().toString();
     }
 
     @Override
@@ -89,7 +86,6 @@ public class GamefieldAdapter implements IGamefieldGraphAdapter {
             numberMills++;
         }
 
-
         return numberMills;
     }
 
@@ -105,11 +101,5 @@ public class GamefieldAdapter implements IGamefieldGraphAdapter {
         return null;
     }
 
-    public String getId() {
-        return id;
-    }
 
-    public void setId(String id) {
-        this.id = id;
-    }
 }

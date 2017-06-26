@@ -38,10 +38,9 @@ public class Controller implements IController, IObservable {
     private volatile Object shutdownSwitch;
     private Logger LOGGER;
 
-    private IGamefieldDAO gamefieldDAO;
 
     @Inject
-    public Controller(IGamefieldGraphAdapter pGamefield, IGamefieldDAO gamefieldDAO) {
+    public Controller(IGamefieldGraphAdapter pGamefield) {
         this.gamefield = pGamefield;
 
         this.player1 = new Player("Player1", 'w');
@@ -56,17 +55,6 @@ public class Controller implements IController, IObservable {
         this.consumedStonesPlayer1 = 0;
         this.consumedStonesPlayer2 = 0;
 
-        this.gamefieldDAO = gamefieldDAO;
-    }
-
-    @Override
-    public void loadFromDB(String gamefieldId) {
-        this.gamefield = this.gamefieldDAO.getGamefieldById(gamefieldId);
-    }
-
-    @Override
-    public void saveToDB() {
-        this.gamefieldDAO.saveGameField(gamefield);
     }
 
     @Override
@@ -79,6 +67,7 @@ public class Controller implements IController, IObservable {
             this.getAnzClosedMills(vertex);
             this.updateObservers(vertex);
         }
+
         return temp;
     }
 
