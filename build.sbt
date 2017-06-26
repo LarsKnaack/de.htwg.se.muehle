@@ -10,7 +10,7 @@ description := "Project for the Lectures SE and SA"
 
 resolvers += "Restlet" at "http://maven.restlet.org/"
 
-lazy val root = (project in file("."))
+lazy val muehle = (project in file("."))
   .enablePlugins(PlayJava)
   .disablePlugins(PlayFilters)
 
