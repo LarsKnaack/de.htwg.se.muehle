@@ -21,7 +21,7 @@ import persistence.IGamefieldDAO;
 import persistence.db4o.GamefieldDb4oDAO;
 
 
-public class Module extends AbstractModule {
+public class MuehleModule extends AbstractModule {
 
     @Override
     protected void configure() {

@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import controllers.IGamefieldGraphAdapter;
 import messages.*;
+import models.impl.GamefieldGraph;
 import models.impl.Mills;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
@@ -35,7 +36,7 @@ public class GamefieldAdapter implements IGamefieldGraphAdapter {
     @Inject
     public GamefieldAdapter(ActorSystem system) {
         millsActor = system.actorOf(Props.create(Mills.class));
-        gamefieldActor = system.actorOf(Props.create(GamefieldAdapter.class));
+        gamefieldActor = system.actorOf(Props.create(GamefieldGraph.class));
     }
 
     @Override
