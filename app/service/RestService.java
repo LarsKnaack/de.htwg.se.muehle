@@ -45,7 +45,7 @@ public class RestService extends AllDirectives {
     }
 
     private synchronized void startRestService() {
-        ActorSystem actorSystem = ActorSystem.create("morris.routes");
+        ActorSystem actorSystem = ActorSystem.create("routes");
         Http http = Http.get(actorSystem);
         final ActorMaterializer materializer = ActorMaterializer.create(actorSystem);
         final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = this.createRoute().flow(actorSystem, materializer);
