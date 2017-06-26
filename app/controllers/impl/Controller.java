@@ -16,6 +16,7 @@ import models.impl.Player;
 import observer.IObservable;
 import observer.IObserver;
 import org.slf4j.Logger;
+import persistence.IGamefieldDAO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class Controller implements IController, IObservable {
     private volatile Object shutdownSwitch;
     private Logger LOGGER;
 
+
     @Inject
     public Controller(IGamefieldGraphAdapter pGamefield) {
         this.gamefield = pGamefield;
@@ -52,6 +54,7 @@ public class Controller implements IController, IObservable {
         this.selected = 0;
         this.consumedStonesPlayer1 = 0;
         this.consumedStonesPlayer2 = 0;
+
     }
 
     @Override
@@ -64,6 +67,7 @@ public class Controller implements IController, IObservable {
             this.getAnzClosedMills(vertex);
             this.updateObservers(vertex);
         }
+
         return temp;
     }
 

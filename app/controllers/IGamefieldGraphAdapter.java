@@ -53,4 +53,6 @@ public interface IGamefieldGraphAdapter {
      * @return number of closed mills (0,1,2)
      * */
     int numberOfMills(int v, char c);
+
+
 }

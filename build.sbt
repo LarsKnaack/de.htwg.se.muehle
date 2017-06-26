@@ -10,6 +10,8 @@ description := "Project for the Lectures SE and SA"
 
 resolvers += "Restlet" at "http://maven.restlet.org/"
 
+//mainClass in (Compile, run) := Some("game.MuehleGame")
+
 lazy val muehle = (project in file("."))
   .enablePlugins(PlayJava)
   .disablePlugins(PlayFilters)

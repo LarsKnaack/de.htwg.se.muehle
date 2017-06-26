@@ -1,14 +1,14 @@
 package persistence;
 
-import models.IGamefieldGraph;
+import persistence.db4o.GamefieldDTO;
 
 /**
  * Created by Lars on 04.04.2017.
  */
 public interface IGamefieldDAO {
-    void saveGameField(IGamefieldGraph gamefieldGraph);
+    void saveGameField(GamefieldDTO gamefieldGraph);
     boolean containsGamefieldGraphByID(String id);
-    IGamefieldGraph getGamefieldById(String id);
+    GamefieldDTO getGamefieldById(String id);
     void deleteGamefieldByID(String id);
 }
 

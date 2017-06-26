@@ -19,25 +19,25 @@ import controllers.IGamefieldGraphAdapter;
 import messages.*;
 import models.impl.GamefieldGraph;
 import models.impl.Mills;
+import play.api.Play;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class GamefieldAdapter implements IGamefieldGraphAdapter {
 
     private static final int MAXVERTEX = 24;
 
+    @Inject
+    @Named("millsActor")
     private ActorRef millsActor;
 
-    private ActorRef gamefieldActor;
-
     @Inject
-    public GamefieldAdapter(ActorSystem system) {
-        millsActor = system.actorOf(Props.create(Mills.class));
-        gamefieldActor = system.actorOf(Props.create(GamefieldGraph.class));
-    }
+    @Named("gamefieldActor")
+    private ActorRef gamefieldActor;
 
     @Override
     public boolean setStone(int vertex, char color) {
@@ -84,7 +84,6 @@ public class GamefieldAdapter implements IGamefieldGraphAdapter {
             numberMills++;
         }
 
-
         return numberMills;
     }
 
@@ -99,4 +98,6 @@ public class GamefieldAdapter implements IGamefieldGraphAdapter {
         }
         return null;
     }
+
+
 }
