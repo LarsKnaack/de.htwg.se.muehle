@@ -34,6 +34,10 @@ public class RestController extends Controller {
         return ok(createJsonBody());
     }
 
+    public Result jsInput(){
+        return ok(createJsonBody());
+    }
+
     public Result handleInput(int vertex) {
         System.out.println("HandleInput");
         boolean success;
