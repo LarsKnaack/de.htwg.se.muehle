@@ -17,8 +17,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import controllers.IController;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import play.Logger;
 
 import java.util.concurrent.CompletionStage;
 
@@ -30,13 +29,11 @@ import static akka.http.javadsl.server.PathMatchers.segment;
 public class RestService extends AllDirectives {
 
     private static volatile Object shutdownSwitch;
-    private static Logger LOGGER;
     private IController controller;
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Inject
     public RestService(IController controller) {
-        LOGGER = LoggerFactory.getLogger(this.getClass());
         this.controller = controller;
         shutdownSwitch = new Object();
 
@@ -51,7 +48,7 @@ public class RestService extends AllDirectives {
         final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = this.createRoute().flow(actorSystem, materializer);
         final CompletionStage<ServerBinding> binding = http.bindAndHandle(routeFlow,
                 ConnectHttp.toHost(Endpoints.BASE_HOST, Endpoints.BASE_PORT), materializer);
-        LOGGER.info("Server online at " + Endpoints.BASE_URL + "\n");
+        Logger.info("Server online at " + Endpoints.BASE_URL + "\n");
 
         Thread runner = new Thread(() -> {
             try {
@@ -59,11 +56,11 @@ public class RestService extends AllDirectives {
                     shutdownSwitch.wait();
                 }
             } catch (InterruptedException e) {
-                LOGGER.error(e.getMessage());
+                Logger.error(e.getMessage());
             }
 
             binding.thenCompose(ServerBinding::unbind).thenAccept(unbound -> actorSystem.terminate());
-            LOGGER.info("REST Server shutdown");
+            Logger.info("REST Server shutdown");
         });
         runner.start();
     }
@@ -71,6 +68,7 @@ public class RestService extends AllDirectives {
     private Route createRoute() {
         return route(
                 path(segment("update"), () -> createHttpResponse(true)),
+                path(segment("reset"), () -> resetGame()),
                 path(segment("handleInput").slash(integerSegment()), this::handleInput),
                 pathPrefix("stone", () ->
                         route(
@@ -88,6 +86,10 @@ public class RestService extends AllDirectives {
                     return complete("<h1>quitGame</h1>");
                 }))
         );
+    }
+
+    private Route resetGame() {
+        return createHttpResponse(controller.resetGame());
     }
 
     private Route handleInput(Integer input) {
@@ -126,7 +128,7 @@ public class RestService extends AllDirectives {
                             .put("Player1", 9 - controller.getConsumedStonesPlayer1())
                             .put("Player2", 9 - controller.getConsumedStonesPlayer2())
             );
-            LOGGER.info("Sending Message: " + responseBody.toString());
+            Logger.info("Sending Message: " + responseBody.toString());
             return complete(StatusCodes.OK, responseBody.toString());
         } else {
             return complete(StatusCodes.METHOD_NOT_ALLOWED);

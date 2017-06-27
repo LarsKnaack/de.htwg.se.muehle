@@ -137,4 +137,5 @@ public interface IController {
     String getGamefieldString();
 
 
+    boolean resetGame();
 }

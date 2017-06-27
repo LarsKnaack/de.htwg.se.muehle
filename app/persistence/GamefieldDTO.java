@@ -1,4 +1,4 @@
-package persistence.db4o;
+package persistence;
 
 import models.IGamefieldGraph;
 
@@ -12,7 +12,7 @@ public class GamefieldDTO {
 
     public GamefieldDTO(IGamefieldGraph gamefieldGraph) {
         this.id = gamefieldGraph.getId();
-        for(int i = 0; i < 24; i++) {
+        for (int i = 0; i < 24; i++) {
             adjacencyList.add(gamefieldGraph.getAdjacencyList(i));
             vertexes[i] = new vertex();
             vertexes[i].color = gamefieldGraph.getStoneColorVertex(i);

@@ -9,17 +9,15 @@
 package game;
 
 import controllers.IController;
-import controllers.RestController;
 import play.api.Play;
-import play.api.inject.Injector;
-import views.tui.Tui;
+import play.inject.Injector;
 import views.gui.Gui;
+import views.tui.Tui;
 
 import java.util.Scanner;
 
 
 public final class MuehleGame {
-
 
     private static Tui tui;
     private static Gui gui;
@@ -28,9 +26,9 @@ public final class MuehleGame {
     private static MuehleGame instance = null;
 
     private MuehleGame () {
-        Injector injector = Play.current().injector();
+        Injector injector = Play.current().injector().asJava();
 
-        controller = injector.asJava().instanceOf(IController.class);
+        controller = injector.instanceOf(IController.class);
         gui = new Gui(this.controller);
         tui = new Tui(this.controller);
     }

@@ -9,22 +9,16 @@
 package controllers.impl;
 
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import controllers.IGamefieldGraphAdapter;
 import messages.*;
-import models.impl.GamefieldGraph;
-import models.impl.Mills;
-import play.api.Play;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class GamefieldAdapter implements IGamefieldGraphAdapter {
@@ -85,6 +79,13 @@ public class GamefieldAdapter implements IGamefieldGraphAdapter {
         }
 
         return numberMills;
+    }
+
+    @Override
+    public boolean reset() {
+        ResetRequest request = new ResetRequest();
+        BoolAnswer answer = (BoolAnswer) ask(gamefieldActor, request);
+        return answer.getContent();
     }
 
     private Object ask(ActorRef actorRef, Object request) {

@@ -55,4 +55,5 @@ public interface IGamefieldGraphAdapter {
     int numberOfMills(int v, char c);
 
 
+    boolean reset();
 }

@@ -10,21 +10,16 @@ package models.impl;
 
 import akka.actor.UntypedAbstractActor;
 import com.google.inject.Inject;
-import messages.BoolAnswer;
-import messages.GetStoneColorMessage;
-import messages.MsgMoveStone;
-import messages.SetStoneVertexRequest;
+import messages.*;
 import models.IGamefieldGraph;
 import persistence.IGamefieldDAO;
-import persistence.db4o.GamefieldDTO;
+import persistence.GamefieldDTO;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGraph {
 
@@ -38,6 +33,12 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
     private String id;
 
     public GamefieldGraph() {
+        init();
+
+        System.out.println("GamefieldID: " + id);
+    }
+
+    private void init() {
         adjacencyList = new ArrayList<>(NUMBERVERTEX);
         vertexes = new vertex[NUMBERVERTEX];
         for (int i = 0; i < NUMBERVERTEX; i++) {
@@ -47,8 +48,7 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
 
         createVertexes();
 
-        id = "bac0680a-d4e7-4aac-94cc-8025f5952f42";
-        System.out.println("GamefieldID: " + id);
+        id = UUID.randomUUID().toString();
     }
 
     @Override
@@ -133,11 +133,17 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
             answer = receiveMsgMoveStone((MsgMoveStone) message);
             getSender().tell(new BoolAnswer(answer), getSelf());
             updateDB();
+        } else if( message instanceof ResetRequest) {
+            if(gamefieldDAO.containsGamefieldGraphByID(getId())) {
+                gamefieldDAO.deleteGamefieldByID(getId());
+            }
+            init();
+            updateDB();
+            getSender().tell(new BoolAnswer(true), getSelf());
         }
     }
 
     private void updateDB() {
-        //System.out.println(gamefieldDAO.getGamefieldById(getId()));
         if(gamefieldDAO.containsGamefieldGraphByID(getId())) {
             gamefieldDAO.deleteGamefieldByID(getId());
         }

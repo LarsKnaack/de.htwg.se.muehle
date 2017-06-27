@@ -9,7 +9,7 @@ import org.ektorp.impl.StdCouchDbInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import persistence.IGamefieldDAO;
-import persistence.db4o.GamefieldDTO;
+import persistence.GamefieldDTO;
 import play.api.Play;
 
 import java.net.MalformedURLException;

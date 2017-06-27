@@ -30,6 +30,15 @@ public class RestController extends Controller {
         return ok(); //views.html.morrisindex.render());
     }
 
+    public Result reset() {
+        if(morrisController.resetGame()) {
+            return ok(createJsonBody());
+        } else {
+            return internalServerError();
+        }
+
+    }
+
     public Result update() {
         return ok(createJsonBody());
     }
@@ -39,7 +48,6 @@ public class RestController extends Controller {
     }
 
     public Result handleInput(int vertex) {
-        System.out.println("HandleInput");
         boolean success;
         if(morrisController.getCurrentStonesToDelete() > 0) {
             success = morrisController.millDeleteStone(vertex);

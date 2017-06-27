@@ -5,7 +5,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import persistence.IGamefieldDAO;
-import persistence.db4o.GamefieldDTO;
+import persistence.GamefieldDTO;
 import play.api.Play;
 
 import java.util.ArrayList;

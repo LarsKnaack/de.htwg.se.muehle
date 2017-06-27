@@ -16,7 +16,6 @@ import models.impl.Player;
 import observer.IObservable;
 import observer.IObserver;
 import org.slf4j.Logger;
-import persistence.IGamefieldDAO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +40,11 @@ public class Controller implements IController, IObservable {
 
     @Inject
     public Controller(IGamefieldGraphAdapter pGamefield) {
+        init();
         this.gamefield = pGamefield;
+    }
 
+    private void init() {
         this.player1 = new Player("Player1", 'w');
         this.player2 = new Player("Player2", 's');
         this.stonesPlayer1 = STONESPLAYER;
@@ -54,7 +56,6 @@ public class Controller implements IController, IObservable {
         this.selected = 0;
         this.consumedStonesPlayer1 = 0;
         this.consumedStonesPlayer2 = 0;
-
     }
 
     @Override
@@ -246,6 +247,12 @@ public class Controller implements IController, IObservable {
             sb.append(this.getVertexColor(i));
         }
         return sb.toString();
+    }
+
+    @Override
+    public boolean resetGame() {
+        init();
+        return gamefield.reset();
     }
 
     class endThread extends Thread {

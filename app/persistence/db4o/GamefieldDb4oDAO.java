@@ -5,6 +5,7 @@ import com.db4o.ObjectContainer;
 import com.db4o.query.Predicate;
 import com.google.inject.Singleton;
 import models.IGamefieldGraph;
+import persistence.GamefieldDTO;
 import persistence.IGamefieldDAO;
 
 import java.util.List;

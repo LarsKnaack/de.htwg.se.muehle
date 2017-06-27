@@ -1,7 +1,5 @@
 package persistence;
 
-import persistence.db4o.GamefieldDTO;
-
 /**
  * Created by Lars on 04.04.2017.
  */
