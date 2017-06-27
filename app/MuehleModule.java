@@ -1,4 +1,4 @@
-package game; /**
+/**
  * Muehlegame
  * Copyright (c) 2015, Thomas Ammann, Johannes Finckh
  *
@@ -12,7 +12,7 @@ import controllers.IGamefieldGraphAdapter;
 import models.IMills;
 import models.impl.GamefieldGraph;
 import models.impl.Mills;
-import persistence.IGamefieldDAO;
+import persistence.dao.IGamefieldDAO;
 import play.libs.akka.AkkaGuiceSupport;
 
 public class MuehleModule extends AbstractModule implements AkkaGuiceSupport {
@@ -23,9 +23,9 @@ public class MuehleModule extends AbstractModule implements AkkaGuiceSupport {
         bindActor(Mills.class, "millsActor");
         bind(IMills.class).to(models.impl.Mills.class);
         bind(IController.class).to(controllers.impl.Controller.class);
-//      bind(IGamefieldDAO.class).to(persistence.couchdb.GamefieldGraphCouchdbDAO.class);
-		bind(IGamefieldDAO.class).to(persistence.db4o.GamefieldDb4oDAO.class);
-//      bind(IGamefieldDAO.class).to(persistence.hibernate.GamefieldHiberateDAO.class);
+//      bind(IGamefieldDAO.class).to(persistence.dao.couchdb.GamefieldGraphCouchdbDAO.class);
+		bind(IGamefieldDAO.class).to(persistence.dao.db4o.GamefieldDb4oDAO.class);
+//      bind(IGamefieldDAO.class).to(persistence.dao.hibernate.GamefieldHiberateDAO.class);
         bind(IGamefieldGraphAdapter.class).to(controllers.impl.GamefieldAdapter.class);
     }
 }

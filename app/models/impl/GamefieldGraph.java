@@ -12,8 +12,7 @@ import akka.actor.UntypedAbstractActor;
 import com.google.inject.Inject;
 import messages.*;
 import models.IGamefieldGraph;
-import persistence.IGamefieldDAO;
-import persistence.GamefieldDTO;
+import persistence.dao.IGamefieldDAO;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,20 +48,6 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
         createVertexes();
 
         id = UUID.randomUUID().toString();
-    }
-
-    @Override
-    public void saveToDB() {
-    }
-
-    @Override
-    public void loadFromDB(String gamefieldId) {
-        GamefieldDTO graph = this.gamefieldDAO.getGamefieldById(gamefieldId);
-        for(int i= 0; i < NUMBERVERTEX; i++) {
-            this.adjacencyList.set(i, graph.getAdjacencyList(i));
-            vertexes[i] = new vertex();
-            vertexes[i].color = graph.getStoneColorVertex(i);
-        }
     }
 
     private void createVertexes() {
@@ -147,7 +132,7 @@ public class GamefieldGraph extends UntypedAbstractActor implements IGamefieldGr
         if(gamefieldDAO.containsGamefieldGraphByID(getId())) {
             gamefieldDAO.deleteGamefieldByID(getId());
         }
-        gamefieldDAO.saveGameField(new GamefieldDTO(this));
+        gamefieldDAO.saveGameField(this);
     }
 
 

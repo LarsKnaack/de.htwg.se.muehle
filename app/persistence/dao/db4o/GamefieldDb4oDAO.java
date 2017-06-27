@@ -1,12 +1,12 @@
-package persistence.db4o;
+package persistence.dao.db4o;
 
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.db4o.query.Predicate;
 import com.google.inject.Singleton;
 import models.IGamefieldGraph;
-import persistence.GamefieldDTO;
-import persistence.IGamefieldDAO;
+import persistence.dto.db4o.Db4oGamefieldDTO;
+import persistence.dao.IGamefieldDAO;
 
 import java.util.List;
 
@@ -25,15 +25,17 @@ public class GamefieldDb4oDAO implements IGamefieldDAO {
     }
 
     @Override
-    public void saveGameField(GamefieldDTO gamefieldGraph) {
-        db.store(gamefieldGraph);
+    public void saveGameField(IGamefieldGraph gamefieldGraph) {
+        System.out.println("Saving gamefield");
+        Db4oGamefieldDTO dto = new Db4oGamefieldDTO(gamefieldGraph);
+        db.store(dto);
         db.commit();
     }
 
     @Override
-    public GamefieldDTO getGamefieldById(String id) {
-        List<GamefieldDTO> gamefieldGraphs = db.query(new Predicate<GamefieldDTO>() {
-            public boolean match(GamefieldDTO gamefieldGraph) {
+    public Db4oGamefieldDTO getGamefieldById(String id) {
+        List<Db4oGamefieldDTO> gamefieldGraphs = db.query(new Predicate<Db4oGamefieldDTO>() {
+            public boolean match(Db4oGamefieldDTO gamefieldGraph) {
                 System.out.println("Database Id: " + gamefieldGraph.getId());
                 return (id.equals(gamefieldGraph.getId()));
             }
