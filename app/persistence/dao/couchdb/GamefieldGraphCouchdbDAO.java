@@ -1,4 +1,4 @@
-package persistence.couchdb;
+package persistence.dao.couchdb;
 
 import models.IGamefieldGraph;
 import org.ektorp.CouchDbConnector;
@@ -8,8 +8,11 @@ import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import persistence.IGamefieldDAO;
-import persistence.GamefieldDTO;
+import persistence.dao.IGamefieldDAO;
+import persistence.dto.IGamefieldDTO;
+import persistence.dto.IVertexDTO;
+import persistence.dto.couchdb.CouchDbGamefieldDTO;
+import persistence.dto.couchdb.CouchDbVertexDTO;
 import play.api.Play;
 
 import java.net.MalformedURLException;
@@ -19,7 +22,7 @@ import java.util.Set;
 public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
 
     private CouchDbConnector db = null;
-    private Logger logger = LoggerFactory.getLogger("persistence.couchdb");
+    private Logger logger = LoggerFactory.getLogger("persistence.dao.couchdb");
 
     public GamefieldGraphCouchdbDAO() {
         HttpClient client = null;
@@ -35,7 +38,7 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
         db.createDatabaseIfNotExists();
     }
 
-    private IGamefieldGraph copyGamefieldGraph(PersistentGamefieldGraph pgamefield) {
+    private IGamefieldGraph copyGamefieldGraph(CouchDbGamefieldDTO pgamefield) {
         if (pgamefield == null) {
             return null;
         }
@@ -44,7 +47,7 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
 
         gamefieldGraph.setId(pgamefield.getId());
 
-        for (PersistentVertex vertex : pgamefield.getVertexs()) {
+        for (IVertexDTO vertex : pgamefield.getVertexs()) {
             int v = vertex.getVertex();
             char color = vertex.getColor();
 
@@ -54,34 +57,34 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
         return gamefieldGraph;
     }
 
-    private PersistentGamefieldGraph copyGamefieldGraph(GamefieldDTO gamefieldGraph) {
+    private CouchDbGamefieldDTO copyGamefieldGraph(IGamefieldDTO gamefieldGraph) {
         if (gamefieldGraph == null) {
             return null;
         }
 
         String gamefieldGraphId = gamefieldGraph.getId();
-        PersistentGamefieldGraph pGamefieldGraph;
+        CouchDbGamefieldDTO pGamefieldGraph;
         if (containsGamefieldGraphByID(gamefieldGraphId)) {
             // The Object already exists within the session
-            pGamefieldGraph = (PersistentGamefieldGraph) db.find(PersistentGamefieldGraph.class, gamefieldGraphId);
+            pGamefieldGraph = db.find(CouchDbGamefieldDTO.class, gamefieldGraphId);
 
             // Synchronize values
-            for (PersistentVertex vertex : pGamefieldGraph.getVertexs()) {
+            for (IVertexDTO vertex : pGamefieldGraph.getVertexs()) {
                 Integer v = vertex.getVertex();
 
-                vertex.setColor(gamefieldGraph.getStoneColorVertex(v));
+                vertex.setColor(gamefieldGraph.getVertexs().get(v).getColor());
             }
 
         } else {
             // A new database entry
-            pGamefieldGraph = new PersistentGamefieldGraph();
+            pGamefieldGraph = new CouchDbGamefieldDTO();
 
-            Set<PersistentVertex> vertexs = new HashSet<PersistentVertex>();
+            Set<CouchDbVertexDTO> vertexs = new HashSet<CouchDbVertexDTO>();
 
             for(int i = 0; i < 24; i++) {
-                char color = gamefieldGraph.getStoneColorVertex(i);
+                char color = gamefieldGraph.getVertexs().get(i).getColor();
 
-                PersistentVertex vertex = new PersistentVertex();
+                CouchDbVertexDTO vertex = new CouchDbVertexDTO();
                 vertex.setVertex(i);
                 vertex.setColor(color);
 
@@ -97,12 +100,13 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
     }
 
     @Override
-    public void saveGameField(GamefieldDTO gamefieldGraph) {
+    public void saveGameField(IGamefieldGraph gamefieldGraph) {
 
+        CouchDbGamefieldDTO dto = new CouchDbGamefieldDTO(gamefieldGraph);
         if (containsGamefieldGraphByID(gamefieldGraph.getId())) {
-            db.update(copyGamefieldGraph(gamefieldGraph));
+            db.update(copyGamefieldGraph(dto));
         } else {
-            db.create(gamefieldGraph.getId(), copyGamefieldGraph(gamefieldGraph));
+            db.create(gamefieldGraph.getId(), copyGamefieldGraph(dto));
         }
     }
 
@@ -116,19 +120,16 @@ public class GamefieldGraphCouchdbDAO implements IGamefieldDAO {
 
 
     @Override
-    public GamefieldDTO getGamefieldById(String id) {
-        PersistentGamefieldGraph g = db.find(PersistentGamefieldGraph.class, id);
+    public IGamefieldDTO getGamefieldById(String id) {
+        CouchDbGamefieldDTO g = db.find(CouchDbGamefieldDTO.class, id);
         if (g == null) {
             return null;
-        }
-        return null;
-        //TODO: return copyGamefieldGraph(g);
+        }return new CouchDbGamefieldDTO(copyGamefieldGraph(g));
     }
 
     @Override
     public void deleteGamefieldByID(String id) {
-
-        //TODO: db.delete(copyGamefieldGraph(getGamefieldById((id))));
+        db.delete(copyGamefieldGraph(getGamefieldById((id))));
     }
 
 

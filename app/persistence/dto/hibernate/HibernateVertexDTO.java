@@ -1,4 +1,7 @@
-package persistence.hibernate;
+package persistence.dto.hibernate;
+
+import persistence.dto.IGamefieldDTO;
+import persistence.dto.IVertexDTO;
 
 import java.io.Serializable;
 
@@ -16,7 +19,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "vertex")
-public class PersistentVertex implements Serializable {
+public class HibernateVertexDTO implements Serializable, IVertexDTO {
 
     private static final long serialVersionUID = 3384225396653913648L;
 
@@ -32,13 +35,15 @@ public class PersistentVertex implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "gamefieldid")
-    private PersistentGamefield gamefield;
+    private HibernateGamefieldDTO gamefield;
 
-    public PersistentVertex(Integer vertex) {
+    public HibernateVertexDTO(Integer vertex) {
         this.vertex = vertex;
     }
 
-    public PersistentVertex() {
+    public HibernateVertexDTO(Integer vertex, char color) {
+        this.vertex = vertex;
+        this.color = color;
 
     }
 
@@ -58,16 +63,21 @@ public class PersistentVertex implements Serializable {
         this.color = color;
     }
 
-    public PersistentGamefield getGamefield() {
+    public IGamefieldDTO getGamefield() {
         return gamefield;
     }
 
-    public void setGamefield(PersistentGamefield gamefield) {
-        this.gamefield = gamefield;
+    public void setGamefield(IGamefieldDTO gamefield) {
+        this.gamefield = (HibernateGamefieldDTO) gamefield;
     }
 
     public Integer getId() {
         return id;
+    }
+
+    @Override
+    public void setId(Object id) {
+        this.id = Integer.parseInt(id.toString());
     }
 
     public void setId(Integer id) {

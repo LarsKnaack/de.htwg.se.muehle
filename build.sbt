@@ -13,11 +13,12 @@ resolvers += "Restlet" at "http://maven.restlet.org/"
 //mainClass in (Compile, run) := Some("game.MuehleGame")
 
 lazy val muehle = (project in file("."))
-  .enablePlugins(PlayJava)
+  .enablePlugins(PlayJava, PlayEbean)
   .disablePlugins(PlayFilters)
 
 libraryDependencies ++= Seq(
   guice,
+  evolutions,
   "org.javassist" % "javassist" % "3.21.0-GA", // dependency for play-enhancer
 
   //JSON Dependencies
@@ -46,3 +47,4 @@ libraryDependencies ++= Seq(
   "junit" % "junit" % "4.12" % Test
 
 )
+playEbeanModels in Compile := Seq("persistence.dto.ebean.*")

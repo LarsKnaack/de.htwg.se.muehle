@@ -35,18 +35,6 @@ public interface IGamefieldGraph {
     List<Integer> getAdjacencyList(int v);
 
     /**
-     * Load a grid from the database
-     * @param gamefieldId
-     */
-    void loadFromDB(String gamefieldId);
-
-    /**
-     * Save a grid to the database
-     */
-    void saveToDB();
-
-
-    /**
      * get the id of the instance
      * @return id
      */

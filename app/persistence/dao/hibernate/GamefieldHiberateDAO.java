@@ -1,11 +1,14 @@
-package persistence.hibernate;
+package persistence.dao.hibernate;
 
 import models.IGamefieldGraph;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import persistence.IGamefieldDAO;
-import persistence.GamefieldDTO;
+import persistence.dao.IGamefieldDAO;
+import persistence.dto.IGamefieldDTO;
+import persistence.dto.IVertexDTO;
+import persistence.dto.hibernate.HibernateGamefieldDTO;
+import persistence.dto.hibernate.HibernateVertexDTO;
 import play.api.Play;
 
 import java.util.ArrayList;
@@ -16,49 +19,46 @@ import java.util.List;
  */
 public class GamefieldHiberateDAO implements IGamefieldDAO{
 
-    private IGamefieldGraph copyGamefieldGraph(PersistentGamefield pgamefieldGraph) {
+    private IGamefieldDTO copyGamefieldGraph(HibernateGamefieldDTO pgamefieldGraph) {
         if(pgamefieldGraph == null) {
             return null;
         }
-
         IGamefieldGraph gamefieldGraph = Play.current().injector().instanceOf(IGamefieldGraph.class);
         gamefieldGraph.setId(pgamefieldGraph.getId());
 
-        for (PersistentVertex vertex : pgamefieldGraph.getVertexs()) {
+        for (IVertexDTO vertex : pgamefieldGraph.getVertexs()) {
             gamefieldGraph.setStoneVertex(vertex.getVertex(), vertex.getColor());
         }
 
-        return gamefieldGraph;
+        return new HibernateGamefieldDTO(gamefieldGraph);
     }
 
-    private PersistentGamefield copyGamefieldGraph(GamefieldDTO gamefieldGraph) {
+    private HibernateGamefieldDTO copyGamefieldGraph(IGamefieldGraph gamefieldGraph) {
         if (gamefieldGraph == null) {
             return null;
         }
 
         String gamefieldId = gamefieldGraph.getId();
-        PersistentGamefield pgamefieldGraph;
+        HibernateGamefieldDTO pgamefieldGraph;
         if (containsGamefieldGraphByID(gamefieldId)) {
             Session session = HibernateUtil.getInstance().getCurrentSession();
-            pgamefieldGraph = (PersistentGamefield) session.get(PersistentGamefield.class, gamefieldId);
+            pgamefieldGraph = (HibernateGamefieldDTO) session.get(HibernateGamefieldDTO.class, gamefieldId);
 
-            List<PersistentVertex> vertexs = pgamefieldGraph.getVertexs();
-            for(PersistentVertex vertex : vertexs) {
+            List<IVertexDTO> vertexs = pgamefieldGraph.getVertexs();
+            for(IVertexDTO vertex : vertexs) {
                 Integer v = vertex.getVertex();
 
                 vertex.setColor(gamefieldGraph.getStoneColorVertex(v));
             }
         } else {
-            pgamefieldGraph = new PersistentGamefield();
+            pgamefieldGraph = new HibernateGamefieldDTO();
 
-            List<PersistentVertex> vertexs = new ArrayList<PersistentVertex>();
+            List<IVertexDTO> vertexs = new ArrayList<IVertexDTO>();
 
             for(int i = 0; i < 24; i++) {
                 char color = gamefieldGraph.getStoneColorVertex(i);
 
-                PersistentVertex vertex = new PersistentVertex();
-                vertex.setVertex(i);
-                vertex.setColor(color);
+                HibernateVertexDTO vertex = new HibernateVertexDTO(i, color);
 
                 vertexs.add(vertex);
             }
@@ -72,7 +72,7 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
 
 
     @Override
-    public void saveGameField(GamefieldDTO gamefieldGraph) {
+    public void saveGameField(IGamefieldGraph gamefieldGraph) {
         Transaction tx = null;
         Session session = null;
 
@@ -80,7 +80,7 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
             session = HibernateUtil.getInstance().getCurrentSession();
             tx = session.beginTransaction();
 
-            PersistentGamefield pgrid = copyGamefieldGraph(gamefieldGraph);
+            HibernateGamefieldDTO pgrid = copyGamefieldGraph(gamefieldGraph);
 
             session.saveOrUpdate(pgrid);
 
@@ -93,11 +93,10 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
     }
 
     @Override
-    public GamefieldDTO getGamefieldById(String id) {
+    public IGamefieldDTO getGamefieldById(String id) {
         Session session = HibernateUtil.getInstance().getCurrentSession();
         session.beginTransaction();
-        return null;
-        //TODO: return copyGamefieldGraph((PersistentGamefield) session.get(PersistentGamefield.class, id));
+        return copyGamefieldGraph(session.get(HibernateGamefieldDTO.class, id));
     }
 
     @Override
@@ -117,7 +116,7 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
             session = HibernateUtil.getInstance().getCurrentSession();
             tx = session.beginTransaction();
 
-            PersistentGamefield pgrid = (PersistentGamefield) session.get(PersistentGamefield.class, id);
+            HibernateGamefieldDTO pgrid = session.get(HibernateGamefieldDTO.class, id);
 
             session.delete(pgrid);
 

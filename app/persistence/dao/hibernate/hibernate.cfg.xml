@@ -12,7 +12,7 @@
         <property name="current_session_context_class">thread</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="show_sql">false</property>
-        <mapping class="persistence.hibernate.PersistentVertex" />
-        <mapping class="persistence.hibernate.PersistentGamefield" />
+        <mapping class="persistence.dto.hibernate.HibernateVertexDTO" />
+        <mapping class="persistence.dto.hibernate.HibernateGamefieldDTO" />
     </session-factory>
 </hibernate-configuration>

@@ -1,8 +1,10 @@
-package persistence.couchdb;
+package persistence.dto.couchdb;
 
 import org.ektorp.support.CouchDbDocument;
+import persistence.dto.IGamefieldDTO;
+import persistence.dto.IVertexDTO;
 
-public class PersistentVertex extends CouchDbDocument {
+public class CouchDbVertexDTO extends CouchDbDocument implements IVertexDTO {
 
     private static final long serialVersionUID = 2462372913947261930L;
 
@@ -11,12 +13,12 @@ public class PersistentVertex extends CouchDbDocument {
     private Integer vertex = 0;
     private char color = 'n';
 
-    public PersistentVertex(Integer vertex, char color) {
+    public CouchDbVertexDTO(Integer vertex, char color) {
         this.vertex = vertex;
         this.color = color;
     }
 
-    public PersistentVertex() {
+    public CouchDbVertexDTO() {
     }
 
     public Integer getVertex() {
@@ -35,11 +37,23 @@ public class PersistentVertex extends CouchDbDocument {
         this.color = color;
     }
 
+    @Override
+    public IGamefieldDTO getGamefield() {
+        return null;
+    }
+
+    @Override
+    public void setGamefield(IGamefieldDTO gamefield) {
+
+    }
+
+    @Override
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    @Override
+    public void setId(Object id) {
+        this.id = id.toString();
     }
 }
