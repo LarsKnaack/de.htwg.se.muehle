@@ -1,4 +1,4 @@
-package game; /**
+/**
  * Muehlegame
  * Copyright (c) 2015, Thomas Ammann, Johannes Finckh
  *
