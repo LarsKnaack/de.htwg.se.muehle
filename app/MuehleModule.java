@@ -24,8 +24,9 @@ public class MuehleModule extends AbstractModule implements AkkaGuiceSupport {
         bind(IMills.class).to(models.impl.Mills.class);
         bind(IController.class).to(controllers.impl.Controller.class);
 //      bind(IGamefieldDAO.class).to(persistence.dao.couchdb.GamefieldGraphCouchdbDAO.class);
-		bind(IGamefieldDAO.class).to(persistence.dao.db4o.GamefieldDb4oDAO.class);
+//      bind(IGamefieldDAO.class).to(persistence.dao.db4o.GamefieldDb4oDAO.class);
 //      bind(IGamefieldDAO.class).to(persistence.dao.hibernate.GamefieldHiberateDAO.class);
+        bind(IGamefieldDAO.class).to(persistence.dao.ebean.GamefieldEbeanDAO.class);
         bind(IGamefieldGraphAdapter.class).to(controllers.impl.GamefieldAdapter.class);
     }
 }

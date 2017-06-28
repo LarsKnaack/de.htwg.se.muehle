@@ -14,7 +14,7 @@ public class Db4oGamefieldDTO implements IGamefieldDTO {
     private String id;
 
     public Db4oGamefieldDTO(IGamefieldGraph gamefieldGraph) {
-        adjacencyList = new ArrayList<>(24);
+        adjacencyList = new ArrayList<>();
         vertexes = new ArrayList<>();
         this.id = gamefieldGraph.getId();
         for (int i = 0; i < 24; i++) {

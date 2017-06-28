@@ -58,9 +58,7 @@ public class GamefieldHiberateDAO implements IGamefieldDAO{
             for(int i = 0; i < 24; i++) {
                 char color = gamefieldGraph.getStoneColorVertex(i);
 
-                HibernateVertexDTO vertex = new HibernateVertexDTO();
-                vertex.setVertex(i);
-                vertex.setColor(color);
+                HibernateVertexDTO vertex = new HibernateVertexDTO(i, color);
 
                 vertexs.add(vertex);
             }
